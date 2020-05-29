@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
+  {% block title %}<title>Local Library</title>{% endblock %}
 </head>
 <body>
-$END$
+  {% block sidebar %}<!-- insert default navigation text for every page -->{% endblock %}
+  {% block content %}
+      <h1>play</h1>
+      <p>hello world</p>
+  {% endblock %}
 </body>
 </html>

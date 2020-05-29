@@ -15,9 +15,11 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from project.views import home
+from project.views import home,design,play
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^home/', home.render_home),
+    url(r'^play/(?P<uid>[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12})', play.render_play),
+    url(r'^design/', design.render_design),
 ]
