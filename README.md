@@ -50,14 +50,12 @@ Enable the virtualenv
 **On Linux**
 
 ```bash
-cd env
 source env/bin/activate
 ```
 
 **On Windows**
 
 ```bash
-cd env
 env\Scripts\activate.bat
 ```
 
