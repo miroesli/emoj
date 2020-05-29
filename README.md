@@ -61,10 +61,17 @@ cd env
 env\Scripts\activate.bat
 ```
 
-Step 5: Run the server
+Step 5: Create the database
+
+```bash
+sudo -u postgres psql -f init.sql
+sudo -u postgres psql -f create.sql
+```
+
+Step 6: Run the server
 
 ```bash
 python3 project/manage.py runserver 8000
 ```
 
-Step 6: Access server in browser at `localhost:8000`
+Step 7: Access server in browser at `http://localhost:8000`
