@@ -62,8 +62,8 @@ env\Scripts\activate.bat
 Step 5: Create the database
 
 ```bash
-sudo -u postgres psql -f init.sql
-sudo -u postgres psql -f create.sql
+sudo -u postgres psql -f project/sql/init.sql
+sudo -u postgres psql -f project/sql/create.sql
 ```
 
 Step 6: Run the server
