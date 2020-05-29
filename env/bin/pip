@@ -1,4 +1,4 @@
-#!/home/miroesli/Desktop/emoj/env/env/bin/python
+#!/home/miroesli/Desktop/emoj/env/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
