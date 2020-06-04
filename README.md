@@ -10,28 +10,28 @@ Seng 499 project by Emily, Misha, Oleg, and Juan.
 
 ## Running locally
 
-Step 1: Clone or fork the repository and change current directory
+### Step 1: Clone or fork the repository and change current directory
 
 ```bash
 git clone https://github.com/miroesli/emoj.git
 cd emoj
 ```
 
-Step 2: Install python3
+### Step 2: Install python3
 
 ```bash
 sudo apt install python3
 ```
 
-Step 3: Install postgres 12
+### Step 3: Install postgres 12
 
 ```bash
 sudo apt install postgresql postgresql-contrib
 ```
 
-Step 4: Get python packages
+### Step 4: Get python packages
 
-**Option 1:** Locally
+**Option 1:** Downloading packages manually
 
 ```bash
 python -m pip install django psycopg2-binary
@@ -59,17 +59,19 @@ source env/bin/activate
 env\Scripts\activate.bat
 ```
 
-Step 5: Create the database
+### Step 5: Create the database
 
 ```bash
 sudo -u postgres psql -f project/sql/init.sql
 sudo -u postgres psql -f project/sql/create.sql
 ```
 
-Step 6: Run the server
+### Step 6: Run the server
 
 ```bash
 python3 project/manage.py runserver 8000
 ```
 
-Step 7: Access server in browser at `http://localhost:8000`
+### Step 7: View Application
+
+Access the server in browser at `http://localhost:8000`
