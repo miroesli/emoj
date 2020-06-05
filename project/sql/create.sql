@@ -44,6 +44,7 @@ create table cards(
 	card_name varchar(64),
 	card_uid uuid PRIMARY KEY,
 	media_uuid uuid,
+	media_class varchar(64),
 	FOREIGN KEY (media_uuid) REFERENCES media_files (media_uid) on delete set null
 );
 drop table if exists decks cascade;

@@ -1,10 +1,5 @@
-html {
-  background-color: #076324;
-  background-image: url("http://www.transparenttextures.com/patterns/black-felt.png");
-}
-
 .card {
-  display: inline-block;
+    display: inline-block;
 }
 
 .ace_clubs {

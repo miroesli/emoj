@@ -1,13 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  {% block title %}<title>Local Library</title>{% endblock %}
+  {% block title %}<title>Design</title>{% endblock %}
+    <link href="global_css_classes.css" rel="stylesheet" type="text/css" >
+    <style>
+        
+    </style>
 </head>
 <body>
-  {% block sidebar %}<!-- insert default navigation text for every page -->{% endblock %}
-  {% block content %}
+    <script>
+        let deck_cards = [];
+        function add_card(card){
+            deck_cards.append(card);
+            //at this point most frameworks can put keep a location updated so i'm waiting to implement when we decide what we use
+        }
+    </script>
+    <style>
+        .card {
+          display: inline-block;
+        }
+
+        .ace_clubs {
+         width: 71px;
+         height: 97px;
+         background: url(http://dobsondev.com/wp-content/uploads/2015/04/windows-playing-cards.png) -2px -1px;
+        }
+    </style>
+
+    {% block sidebar %}<!-- insert default navigation text for every page -->{% endblock %}
+    {% block content %}
       <h1>design</h1>
-      <p>hello world</p>
-  {% endblock %}
+        <div class="deck-cards">
+
+        </div>
+        <div class="all-cards-container">
+          {% for card in cards %}
+              {# change ace_clubs to : {{ card.media_class }} #}
+            <div class="card ace_clubs " onclick="add_card({{  card }})"></div>
+          {% endfor %}
+        </div>
+    {% endblock %}
 </body>
 </html>
