@@ -1,6 +1,7 @@
 from project import db_handler
-ranks = {"ace", "two", "three", "four", "five", "six", "seven", "eight", "nine","ten", "jack", "queen", "king"}
-suits = {"clubs", "hearts", "diamonds", "spades"}
+import time
+ranks = ["ace", "two", "three", "four", "five", "six", "seven", "eight", "nine","ten", "jack", "queen", "king"]
+suits = ["clubs", "hearts", "diamonds", "spades"]
 
 for suit in suits:
     for rank in ranks:

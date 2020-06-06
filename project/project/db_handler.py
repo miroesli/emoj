@@ -42,11 +42,12 @@ class DBClassDeck(NiceObject):
         self.template_uid = template_uid
 
 class DBClassCard(NiceObject):
-    def __init__(self, card_name, card_uid, media_uuid, media_class):
+    def __init__(self, card_name, card_uid, media_uuid, media_class, creation_timestamp):
         self.card_name = card_name
         self.card_uid = card_uid
         self.media_uuid = media_uuid
         self.media_class = media_class
+        self.creation_timestamp = creation_timestamp
 
 
 def get_template_decks(template_uuid):
@@ -63,7 +64,7 @@ def get_cards():
     conn = get_conn()
     with conn.cursor() as curs:
         # don't use select *, copy order from dbclass
-        query = """select card_name, card_uid::varchar, media_uuid::varchar, media_class from cards"""
+        query = """select card_name, card_uid::varchar, media_uuid::varchar, media_class, creation_timestamp from cards order by creation_timestamp"""
         curs.execute(query)
         # *i just places all things into the function individually in order
         return [DBClassCard(*i) for i in curs]
