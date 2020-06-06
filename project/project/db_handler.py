@@ -25,13 +25,14 @@ class NiceObject(object):
                 d[k] = [x.to_dict() for x in d[k]]
             elif k == "password":
                 d[k] = ''
+            if not d[k]:
+                d[k] = ''
         return d
 
 
 #todo add error handling
 def get_conn():
     return psycopg2.connect("dbname='project' user='toggleme' password='ss'")
-
 
 class DBClassDeck(NiceObject):
     def __init__(self, deck_name, game_board_location, deck_uid, template_uid):
@@ -40,12 +41,19 @@ class DBClassDeck(NiceObject):
         self.deck_uid = deck_uid
         self.template_uid = template_uid
 
+class DBClassCard(NiceObject):
+    def __init__(self, card_name, card_uid, media_uuid, media_class):
+        self.card_name = card_name
+        self.card_uid = card_uid
+        self.media_uuid = media_uuid
+        self.media_class = media_class
+
 
 def get_template_decks(template_uuid):
     conn = get_conn()
     with conn.cursor() as curs:
         #don't use select *, copy order from dbclass
-        query = """select deck_name, game_board_location, deck_uid, template_uid from decks where template_uuid = %s"""
+        query = """select deck_name, game_board_location, deck_uid::varchar, template_uid::varchar from decks where template_uuid = %s"""
         curs.execute(query,[template_uuid])
         # *i just places all things into the function individiaully in order
         return [DBClassDeck(*i) for i in curs]
@@ -55,10 +63,10 @@ def get_cards():
     conn = get_conn()
     with conn.cursor() as curs:
         # don't use select *, copy order from dbclass
-        query = """select card_name, card_uid, media_uuid, media_class from cards"""
+        query = """select card_name, card_uid::varchar, media_uuid::varchar, media_class from cards"""
         curs.execute(query)
         # *i just places all things into the function individually in order
-        return [DBClassDeck(*i) for i in curs]
+        return [DBClassCard(*i) for i in curs]
 
 
 def insert_card(card_name, media_uuid, media_class):

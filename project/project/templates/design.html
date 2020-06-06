@@ -2,18 +2,55 @@
 <html lang="en">
 <head>
   {% block title %}<title>Design</title>{% endblock %}
-    <link href="global_css_classes.css" rel="stylesheet" type="text/css" >
+    <!-- development version, includes helpful console warnings -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    {% load static %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'global_css_classes.css' %}">
+
     <style>
-        
+        #all-cards-container{
+            display: flex;
+        }
+        #deck-cards-container{
+            display: flex;
+        }
     </style>
 </head>
 <body>
     <script>
+        //preload cards into js with django. we can make this dynamic later with vue
+        let card_list = {{ cards | safe }};
         let deck_cards = [];
-        function add_card(card){
-            deck_cards.append(card);
-            //at this point most frameworks can put keep a location updated so i'm waiting to implement when we decide what we use
+        window.onload = function () {
+            //vue setup. delimeters set to square brackets because django uses curly
+            let selected_cards_vue = new Vue({
+              delimiters: ['[[', ']]'],
+              el: '#deck-cards-container',
+              data: {
+                  deck_cards: deck_cards
+              },
+              methods: {
+                remove_card: function (card_index) {
+                  deck_cards.splice(card_index,1);
+                }
+              }
+            });
+
+            let all_cards_vue = new Vue({
+              delimiters: ['[[', ']]'],
+              el: '#all-cards-container',
+              data: {
+                  card_list: card_list
+              },
+              methods: {
+                add_card: function (card) {
+                  deck_cards.push(card);
+                }
+              }
+            });
         }
+
     </script>
     <style>
         .card {
@@ -30,14 +67,12 @@
     {% block sidebar %}<!-- insert default navigation text for every page -->{% endblock %}
     {% block content %}
       <h1>design</h1>
-        <div class="deck-cards">
-
+        <div id="deck-cards-container">
+            <div v-for="(card, index) in deck_cards" :class="card.media_class" v-on:click="remove_card(index)"></div>
         </div>
-        <div class="all-cards-container">
-          {% for card in cards %}
-              {# change ace_clubs to : {{ card.media_class }} #}
-            <div class="card ace_clubs " onclick="add_card({{  card }})"></div>
-          {% endfor %}
+        <br>
+        <div id="all-cards-container">
+            <div v-for="card in card_list" :class="card.media_class" v-on:click="add_card(card)" ></div>
         </div>
     {% endblock %}
 </body>
