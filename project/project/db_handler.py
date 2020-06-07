@@ -53,17 +53,19 @@ class DBClassCard(NiceObject):
 def get_template_decks(template_uuid):
     conn = get_conn()
     with conn.cursor() as curs:
-        #don't use select *, copy order from dbclass
-        query = """select deck_name, game_board_location, deck_uid::varchar, template_uid::varchar from decks where template_uuid = %s"""
-        curs.execute(query,[template_uuid])
-        # *i just places all things into the function individiaully in order
+
+        query = """ select deck_name, game_board_location, deck_uid::varchar, template_uid::varchar 
+                    from decks where template_uuid = %s"""
+        curs.execute(query, [template_uuid])
         return [DBClassDeck(*i) for i in curs]
 
-
+# notes on db function things
+# please include order by clause and all items selected(no select *) to future proof
+# if setting up a new entity make a DBClassMyNewEntity and make it's __init__ take all of the db values
+# use *i to take all of the select parameters(in the order they are in at the select)
 def get_cards():
     conn = get_conn()
     with conn.cursor() as curs:
-        # don't use select *, copy order from dbclass
         query = """select card_name, card_uid::varchar, media_uuid::varchar, media_class, creation_timestamp from cards order by creation_timestamp"""
         curs.execute(query)
         # *i just places all things into the function individually in order

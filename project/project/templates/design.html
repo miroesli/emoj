@@ -8,7 +8,7 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     {% load static %}
 
-    <link rel="stylesheet" type="text/css" href="{% static 'global_css_classes.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/global_css_classes.css' %}">
 
     <style>
         #all-cards-container{
@@ -33,39 +33,51 @@
         let deck_cards = [];
         window.onload = function () {
             //vue setup. delimeters set to square brackets because django uses curly
-            let selected_cards_vue = new Vue({
-              delimiters: ['[[', ']]'],
-              el: '#deck-cards-container',
-              data: {
-                  deck_cards: deck_cards
-              },
-              methods: {
-                remove_card: function (card_index) {
-                  deck_cards.splice(card_index,1);
-                }
-              }
-            });
 
             let all_cards_vue = new Vue({
               delimiters: ['[[', ']]'],
-              el: '#all-cards-container',
+              el: '#design-container',
               data: {
-                  card_list: card_list
+                  card_list: card_list,
+                  deck_cards: deck_cards
               },
               methods: {
                 add_card: function (card) {
-                  deck_cards.push(card);
+                    // if someone can make v-for work with dicts we can toss this garbage, on the bright side it preserves order lol
+                    let index = deck_cards.indexOf(card);
+                    if(index !== -1){
+                        card.quantity+=1;
+                        Vue.set(this.deck_cards, index, card);
+                    }
+                    else{
+                        card.quantity = 1;
+                        deck_cards.push(card);
+                    }
+                },
+                remove_card:function(card){
+                    let index = deck_cards.indexOf(card);
+                    if(card.quantity>1){
+                       card.quantity-=1;
+                       Vue.set(this.deck_cards, index, card);
+                    }
+                    else{
+                        deck_cards.splice(index,1);
+                    }
+                },
+                add_all: function () {
+                    for(let card of card_list){
+                        this.add_card(card);
+                    }
+                },
+                increment_all:function () {
+                    for(let i=0;i<deck_cards.length;i++){
+                        let card = deck_cards[i];
+                        card.quantity+=1;
+                        Vue.set(this.deck_cards, i, card);
+                    }
                 }
               }
             });
-        }
-        function add_all(){
-            debugger;
-            //todo
-        }
-        function increment_all(){
-            debugger;
-            //todo
         }
     </script>
     <style>
@@ -75,6 +87,7 @@
 
         .selected-card {
             margin-left: 2px;
+            color: red;
         }
         .blank-card{
             height: 97px;
@@ -87,28 +100,28 @@
         .displayed-card{
             margin-bottom: 5px;
             min-height: 97px;
-        }
-
-        .ace_clubs {
-         width: 71px;
-         height: 97px;
-         background: url(http://dobsondev.com/wp-content/uploads/2015/04/windows-playing-cards.png) -2px -1px;
+            color: red;
         }
     </style>
 
     {% block sidebar %}<!-- insert default navigation text for every page -->{% endblock %}
     {% block content %}
       <h1>design</h1>
-        <div id="deck-cards-container">
-            <div v-for="(card, index) in deck_cards" :class="'selected-card ' + card.media_class" v-on:click="remove_card(index)"></div>
-        </div>
-        <br>
-        <div id="all-cards-container">
-            <div style="grid-column: 1 / 14; display: flex;justify-content: space-around" class="displayed-card" >
-                <div class="blank-card" onclick="add_all()">add one of each card</div>
-                <div class="blank-card" onclick="increment_all()">add one of each added card</div>
+        <div id="design-container">
+            <div id="deck_slots">
+
             </div>
-            <div v-for="card in card_list" :class="'displayed-card ' + card.media_class" v-on:click="add_card(card)" ></div>
+            <div id="deck-cards-container">
+                <div v-for="card in deck_cards"  :class="'selected-card ' + card.media_class" v-on:click="remove_card(card.card_uid)">[[card.quantity]]</div>
+            </div>
+            <br>
+            <div id="all-cards-container">
+                <div style="grid-column: 1 / 14; display: flex;justify-content: space-around" class="displayed-card" >
+                    <div class="blank-card" v-on:click="add_all()" >add one of each card</div>
+                    <div class="blank-card" v-on:click="increment_all()" >add one of each added card</div>
+                </div>
+                <div v-for="card in card_list" :class="'displayed-card ' + card.media_class" v-on:click="add_card(card)" ></div>
+            </div>
         </div>
     {% endblock %}
 </body>
