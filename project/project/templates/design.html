@@ -112,7 +112,7 @@
 
             </div>
             <div id="deck-cards-container">
-                <div v-for="card in deck_cards"  :class="'selected-card ' + card.media_class" v-on:click="remove_card(card.card_uid)">[[card.quantity]]</div>
+                <div v-for="card in deck_cards"  :class="'selected-card ' + card.media_class" v-on:click="remove_card(card)">[[card.quantity]]</div>
             </div>
             <br>
             <div id="all-cards-container">
