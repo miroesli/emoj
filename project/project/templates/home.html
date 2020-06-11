@@ -9,18 +9,21 @@
 </head>
 
 <body>
-  <script>
-    axios.get("/api/5").then((response) => {
-      this.resp = response.data;
-      console.log(this.resp)
-    });
-  </script>
+  
   {% block sidebar %}
   <!-- insert default navigation text for every page -->{% endblock %}
   {% block content %}
   <h1>home</h1>
   <p>hello world</p>
+  <div id="please"></div>
   {% endblock %}
+  <script>
+    var axiosResult = document.getElementById('please');
+    axios.get("/api/5").then((response) => {
+      this.resp = response.data;
+      axiosResult.innerHTML = this.resp;
+    });
+  </script>
 </body>
 
 </html>
