@@ -13,13 +13,17 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+# from django.conf.urls import url
+from django.urls import re_path, path
 from django.contrib import admin
-from project.views import home, design, play
+from project.views import home, design, play, api
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^home/', home.render_home),
-    url(r'^play/(?P<uid>[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12})', play.render_play),
-    url(r'^design/', design.render_design),
+    path('', home.render_home, name='root'),
+    path('api/<id>', api.id),
+    path('admin/', admin.site.urls),
+    path('home/', home.render_home),
+    re_path(
+        r'^play/(?P<uid>[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12})', play.render_play),
+    path('design/', design.render_design),
 ]
