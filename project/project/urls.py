@@ -16,10 +16,10 @@ Including another URLconf
 # from django.conf.urls import url
 from django.urls import re_path, path
 from django.contrib import admin
-from project.views import home, design, play, api
+from project.views import root, api, home, design, play
 
 urlpatterns = [
-    path('', home.render_home, name='root'),
+    path('', root.render_root, name='root'),
     path('api/<id>', api.id),
     path('admin/', admin.site.urls),
     path('home/', home.render_home),
