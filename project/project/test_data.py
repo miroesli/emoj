@@ -1,4 +1,4 @@
-from project import db_handler
+import db_handler
 import time
 ranks = ["ace", "two", "three", "four", "five", "six", "seven", "eight", "nine","ten", "jack", "queen", "king"]
 suits = ["clubs", "hearts", "diamonds", "spades"]
