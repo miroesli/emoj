@@ -1,95 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  {% block title %}<title>Design</title>{% endblock %}
+    {% block title %}<title>Design</title>{% endblock %}
     <!-- development version, includes helpful console warnings -->
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <!-- axios is a communication platform for vue to communicate to backend-->
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     {% load static %}
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/global_css_classes.css' %}">
 
     <style>
-        #all-cards-container{
+        #all-cards-container {
             display: grid;
             grid-template-columns: repeat(13, 1fr);
         }
-        #deck-cards-container{
+
+        #deck-cards-container {
             display: flex;
             background: aliceblue;
             padding: 5px;
             min-height: 97px;
             border-radius: 3px;
         }
-
     </style>
 
 </head>
+
 <body>
     <script>
         //preload cards into js with django. we can make this dynamic later with vue
-        let card_list = {{ cards | safe }};
+        let card_list = {
+            {
+                cards | safe
+            }
+        };
         let deck_cards = [];
         window.onload = function () {
             //vue setup. delimeters set to square brackets because django uses curly
 
             let all_cards_vue = new Vue({
-              delimiters: ['[[', ']]'],
-              el: '#design-container',
-              data: {
-                  card_list: card_list,
-                  deck_cards: deck_cards
-              },
-              methods: {
-                add_card: function (card) {
-                    // if someone can make v-for work with dicts we can toss this garbage, on the bright side it preserves order lol
-                    let index = deck_cards.indexOf(card);
-                    if(index !== -1){
-                        card.quantity+=1;
-                        Vue.set(this.deck_cards, index, card);
-                    }
-                    else{
-                        card.quantity = 1;
-                        deck_cards.push(card);
-                    }
+                delimiters: ['[[', ']]'],
+                el: '#design-container',
+                data: {
+                    card_list: card_list,
+                    deck_cards: deck_cards
                 },
-                remove_card:function(card){
-                    let index = deck_cards.indexOf(card);
-                    if(card.quantity>1){
-                       card.quantity-=1;
-                       Vue.set(this.deck_cards, index, card);
-                    }
-                    else{
-                        deck_cards.splice(index,1);
-                    }
-                },
-                add_all: function () {
-                    for(let card of card_list){
-                        this.add_card(card);
-                    }
-                },
-                increment_all:function () {
-                    for(let i=0;i<deck_cards.length;i++){
-                        let card = deck_cards[i];
-                        card.quantity+=1;
-                        Vue.set(this.deck_cards, i, card);
+                methods: {
+                    add_card: function (card) {
+                        // if someone can make v-for work with dicts we can toss this garbage, on the bright side it preserves order lol
+                        let index = deck_cards.indexOf(card);
+                        if (index !== -1) {
+                            card.quantity += 1;
+                            Vue.set(this.deck_cards, index, card);
+                        } else {
+                            card.quantity = 1;
+                            deck_cards.push(card);
+                        }
+                    },
+                    remove_card: function (card) {
+                        let index = deck_cards.indexOf(card);
+                        if (card.quantity > 1) {
+                            card.quantity -= 1;
+                            Vue.set(this.deck_cards, index, card);
+                        } else {
+                            deck_cards.splice(index, 1);
+                        }
+                    },
+                    add_all: function () {
+                        for (let card of card_list) {
+                            this.add_card(card);
+                        }
+                    },
+                    increment_all: function () {
+                        for (let i = 0; i < deck_cards.length; i++) {
+                            let card = deck_cards[i];
+                            card.quantity += 1;
+                            Vue.set(this.deck_cards, i, card);
+                        }
                     }
                 }
-              }
             });
         }
     </script>
     <style>
         .card {
-          display: inline-block;
+            display: inline-block;
         }
 
         .selected-card {
             margin-left: 2px;
             color: red;
         }
-        .blank-card{
+
+        .blank-card {
             height: 97px;
             width: 71px;
             background: beige;
@@ -97,32 +103,36 @@
             border: 2px burlywood;
         }
 
-        .displayed-card{
+        .displayed-card {
             margin-bottom: 5px;
             min-height: 97px;
             color: red;
         }
     </style>
 
-    {% block sidebar %}<!-- insert default navigation text for every page -->{% endblock %}
+    {% block sidebar %}
+    <!-- insert default navigation text for every page -->{% endblock %}
     {% block content %}
-      <h1>design</h1>
-        <div id="design-container">
-            <div id="deck_slots">
+    <h1>design</h1>
+    <div id="design-container">
+        <div id="deck_slots">
 
+        </div>
+        <div id="deck-cards-container">
+            <div v-for="card in deck_cards" :class="'selected-card ' + card.media_class" v-on:click="remove_card(card)">
+                [[card.quantity]]</div>
+        </div>
+        <br>
+        <div id="all-cards-container">
+            <div style="grid-column: 1 / 14; display: flex;justify-content: space-around" class="displayed-card">
+                <div class="blank-card" v-on:click="add_all()">add one of each card</div>
+                <div class="blank-card" v-on:click="increment_all()">add one of each added card</div>
             </div>
-            <div id="deck-cards-container">
-                <div v-for="card in deck_cards"  :class="'selected-card ' + card.media_class" v-on:click="remove_card(card)">[[card.quantity]]</div>
-            </div>
-            <br>
-            <div id="all-cards-container">
-                <div style="grid-column: 1 / 14; display: flex;justify-content: space-around" class="displayed-card" >
-                    <div class="blank-card" v-on:click="add_all()" >add one of each card</div>
-                    <div class="blank-card" v-on:click="increment_all()" >add one of each added card</div>
-                </div>
-                <div v-for="card in card_list" :class="'displayed-card ' + card.media_class" v-on:click="add_card(card)" ></div>
+            <div v-for="card in card_list" :class="'displayed-card ' + card.media_class" v-on:click="add_card(card)">
             </div>
         </div>
+    </div>
     {% endblock %}
 </body>
+
 </html>

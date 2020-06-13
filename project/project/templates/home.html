@@ -1,13 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   {% block title %}<title>Local Library</title>{% endblock %}
+  <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+  <!-- axios is a communication platform for vue to communicate to backend-->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
+
 <body>
-  {% block sidebar %}<!-- insert default navigation text for every page -->{% endblock %}
+  
+  {% block sidebar %}
+  <!-- insert default navigation text for every page -->{% endblock %}
   {% block content %}
-      <h1>home</h1>
-      <p>hello world</p>
+  <h1>home</h1>
+  <p>hello world</p>
+  <div id="please"></div>
   {% endblock %}
+  <script>
+    var axiosResult = document.getElementById('please');
+    axios.get("/api/5").then((response) => {
+      this.resp = response.data;
+      axiosResult.innerHTML = this.resp;
+    });
+  </script>
 </body>
+
 </html>
