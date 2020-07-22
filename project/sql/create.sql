@@ -70,8 +70,11 @@ create table cards_in_play(
 	location_id int,
 	player_uid uuid,
 	card_uid uuid,
-	card_quantity int CHECK (card_quantity >= 0),
-	PRIMARY KEY (play_uid, card_uid),drop table if exists decks cascade;
+	PRIMARY KEY (play_uid, card_uid)
+);
+
+
+drop table if exists decks cascade;
 create table decks(
 	deck_name varchar(64),
 	deck_uid uuid PRIMARY KEY,
