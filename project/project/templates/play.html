@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
     {% block title %}<title>Local Library</title>{% endblock %}
+        <!-- development version, includes helpful console warnings -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- axios is a communication platform for vue to communicate to backend-->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/global_css_classes.css' %}">
     <style>
@@ -25,8 +29,6 @@
         #board-area{
             display: flex;
             flex: 8;
-
-
         }
         #hand-area{
             flex: 3;
@@ -47,27 +49,45 @@
 <script>
         //preload cards into js with django. we can make this dynamic later with vue
         let players = {{players | safe}};
+        let player = {{player | safe}};
+        window.onload = function () {
+            //vue setup. delimeters set to square brackets because django uses curly
+            let play_area_vue = new Vue({
+                delimiters: ['[[', ']]'],
+                el: '#play-area',
+                data: {
+                    players: players,
+                    player: player
+                },
+                computed:{
+                  middle_players(){
+                      return players.splice(1,players.length-2)
+                  }
+                },
+                methods: {}
+            });
+        }
 </script>
   {% block sidebar %}<!-- insert default navigation text for every page -->{% endblock %}
   {% block content %}
     <div id="play-area">
         <div id="main-area">
             <div id="top-bar">
-
+                <div v-for="player in middle_players" >[[player]]</div>
             </div>
             <div id="board-area">
                 <div id="left-bar" class="side-bar">
-
+                     <div>[[ players[0] ]]</div>
                 </div>
                 <div id="board-grid-area">
 
                 </div>
                 <div id="right-bar" class="side-bar">
-
+                    <div>[[ players[players.length-1] ]]</div>
                 </div>
             </div>
             <div id="hand-area">
-
+                <div v-for="card in player.hand" :class="card.media_class"></div>
             </div>
         </div>
         <div id="options-area">
