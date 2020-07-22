@@ -60,7 +60,7 @@ def get_template_decks(template_uuid):
     with conn.cursor() as curs:
 
         query = """ select deck_name, game_board_location, deck_uid::varchar, template_uid::varchar 
-                    from decks where template_uuid = %s"""
+                    from game_template_decks where template_uid = %s"""
         curs.execute(query, [template_uuid])
         return [DBClassDeck(*i) for i in curs]
 
@@ -82,7 +82,7 @@ def get_players():
 def get_room_players(room_uid):
     conn = get_conn()
     with conn.cursor() as curs:
-        query = """select card_name, display_name, player_uid::varchar from 
+        query = """select username, display_name, player_uid::varchar from 
                    players p join room_players r on p.player_uid = r.player_uid
                    where room_uid = %s"""
         curs.execute(query[room_uid])
@@ -93,7 +93,7 @@ def get_room_players(room_uid):
 def get_cards():
     conn = get_conn()
     with conn.cursor() as curs:
-        query = """select username, card_uid::varchar, media_uuid::varchar, media_class, creation_timestamp from cards order by creation_timestamp"""
+        query = """select card_name, card_uid::varchar, media_uuid::varchar, media_class, creation_timestamp from cards order by creation_timestamp"""
         curs.execute(query)
         # *i just places all things into the function individually in order
         return [DBClassCard(*i) for i in curs]
