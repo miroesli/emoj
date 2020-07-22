@@ -140,3 +140,10 @@ def insert_card(card_name, media_uuid, media_class):
         query = """insert into cards(card_name, card_uid, media_uuid, media_class) values(%s, uuid_generate_v4(), %s, %s)"""
         curs.execute(query, [card_name, media_uuid, media_class])
     conn.commit()
+
+def insert_card_into_deck(deck_uid, card_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """insert into deck_cards(deck_uid, card_uid) values(%s, %s)"""
+        curs.execute(query, [deck_uid, card_uid])
+    conn.commit()
