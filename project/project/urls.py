@@ -17,7 +17,6 @@ Including another URLconf
 from django.urls import re_path, path
 from django.contrib import admin
 from project.views import root, api, home, design, play
-
 urlpatterns = [
     path('', root.render_root, name='root'),
     path('api/<id>', api.id),

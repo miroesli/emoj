@@ -32,11 +32,7 @@
 <body>
     <script>
         //preload cards into js with django. we can make this dynamic later with vue
-        let card_list = {
-            {
-                cards | safe
-            }
-        };
+        let card_list = {{cards | safe}};
         let deck_cards = [];
         window.onload = function () {
             //vue setup. delimeters set to square brackets because django uses curly

@@ -72,6 +72,18 @@ def get_cards():
         return [DBClassCard(*i) for i in curs]
 
 
+def get_player_cards(player_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """ select card_name, card_uid::varchar, media_uuid::varchar, media_class, creation_timestamp from
+                    cards c join cards_in_play p on c.card_uid = p.card_uid 
+                    where player_uid =%s
+                    order by creation_timestamp"""
+        curs.execute(query,[player_uid])
+        # *i just places all things into the function individually in order
+        return [DBClassCard(*i) for i in curs]
+
+
 def insert_card(card_name, media_uuid, media_class):
     conn = get_conn()
     with conn.cursor() as curs:

@@ -1,13 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  {% block title %}<title>Local Library</title>{% endblock %}
+    {% block title %}<title>Local Library</title>{% endblock %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/global_css_classes.css' %}">
+    <style>
+        #play-area{
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
+        #main-area{
+            display: flex;
+            flex-direction: column;
+            flex:7;
+            height: 100%;
+
+        }
+        #options-area{
+            flex: 2;
+            height: 100%;
+            background-color: green;
+        }
+        #board-area{
+            display: flex;
+            flex: 8;
+
+
+        }
+        #hand-area{
+            flex: 3;
+            background-color: brown;
+        }
+        .side-bar,#top-bar{
+            background-color: burlywood;
+            flex:1.5;
+        }
+        #board-grid-area{
+            background-color: aqua;
+            flex:9;
+            display: grid;
+        }
+    </style>
 </head>
 <body>
   {% block sidebar %}<!-- insert default navigation text for every page -->{% endblock %}
   {% block content %}
-      <h1>play</h1>
-      <p>hello world</p>
+    <div id="play-area">
+        <div id="main-area">
+            <div id="top-bar">
+
+            </div>
+            <div id="board-area">
+                <div id="left-bar" class="side-bar">
+
+                </div>
+                <div id="board-grid-area">
+
+                </div>
+                <div id="right-bar" class="side-bar">
+
+                </div>
+            </div>
+            <div id="hand-area">
+
+            </div>
+        </div>
+        <div id="options-area">
+
+        </div>
+
+
+    </div>
+
+
+
+
+
   {% endblock %}
 </body>
 </html>
