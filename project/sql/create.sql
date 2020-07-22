@@ -67,11 +67,15 @@ create table deck_cards(
 );
 drop table if exists cards_in_play;
 create table cards_in_play(
-	play_uid uuid,
+	room_uid uuid,
 	location_id int,
+	order_index int,
 	player_uid uuid,
 	card_uid uuid,
-	PRIMARY KEY (play_uid, card_uid)
+	revealed boolean,
+	FOREIGN KEY (room_uid) REFERENCES rooms (room_uid) on delete  cascade,
+	FOREIGN KEY (card_uid) REFERENCES cards (card_uid) on delete  cascade,
+	PRIMARY KEY (room_uid, card_uid)
 );
 
 

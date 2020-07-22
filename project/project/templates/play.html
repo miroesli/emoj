@@ -44,6 +44,10 @@
     </style>
 </head>
 <body>
+<script>
+        //preload cards into js with django. we can make this dynamic later with vue
+        let players = {{players | safe}};
+</script>
   {% block sidebar %}<!-- insert default navigation text for every page -->{% endblock %}
   {% block content %}
     <div id="play-area">
