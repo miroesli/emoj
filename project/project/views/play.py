@@ -1,8 +1,9 @@
 from django.shortcuts import render
-from project import db_handler
+from project import db_handler,utils
 
 # example of uid CA761232-ED42-11CE-BACD-00AA0057B223
 def render_play(request, room_uid):
+    utils.reset_room(room_uid)
     room_players = db_handler.get_players() # replace with get room players when data is ready
     # we will need to get a specific player via cookies eventually but for now I set the first player as active
     player = room_players[0]
