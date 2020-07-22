@@ -9,7 +9,9 @@ drop table if exists rooms cascade;
 create table rooms(
 	room_name VARCHAR(64) not null,
 	room_passcode varchar(64),
-	room_uid uuid PRIMARY KEY
+	room_uid uuid PRIMARY KEY,
+    template_uuid uuid,
+    FOREIGN KEY (template_uuid) REFERENCES game_templates (template_uid) on delete set null
 );
 drop table if exists room_players;
 create table room_players(
