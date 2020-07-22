@@ -75,11 +75,4 @@ create table cards_in_play(
 );
 
 
-drop table if exists decks cascade;
-create table decks(
-	deck_name varchar(64),
-	deck_uid uuid PRIMARY KEY
-);
-
-
  
