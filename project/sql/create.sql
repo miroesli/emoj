@@ -60,6 +60,7 @@ drop table if exists deck_cards cascade;
 create table deck_cards(
 	deck_uid uuid,
 	card_uid uuid,
+	media_uid uuid,
 	PRIMARY KEY (deck_uid,card_uid),
 	FOREIGN KEY (deck_uid) REFERENCES decks (deck_uid) on delete  cascade,
 	FOREIGN KEY (card_uid) REFERENCES cards (card_uid) on delete  cascade
@@ -77,13 +78,7 @@ create table cards_in_play(
 drop table if exists decks cascade;
 create table decks(
 	deck_name varchar(64),
-	deck_uid uuid PRIMARY KEY,
-	media_uid uuid,
-	FOREIGN KEY (media_uid) REFERENCES media_files (media_uid) on delete set null
-);
-	FOREIGN KEY (card_uid) REFERENCES cards (card_uid),
-	FOREIGN KEY (player_uid) REFERENCES players (player_uid),
-	constraint chk_in_play check ((location_id is not null or player_uid is not null) and (location_id is null or player_uid is  null))
+	deck_uid uuid PRIMARY KEY
 );
 
 
