@@ -62,7 +62,6 @@ drop table if exists deck_cards cascade;
 create table deck_cards(
 	deck_uid uuid,
 	card_uid uuid,
-	media_uid uuid,
 	PRIMARY KEY (deck_uid,card_uid),
 	FOREIGN KEY (deck_uid) REFERENCES decks (deck_uid) on delete  cascade,
 	FOREIGN KEY (card_uid) REFERENCES cards (card_uid) on delete  cascade
