@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from project import db_handler, utils
 
+
 # example of uid 36e37bb4-cc52-11ea-b508-784f437b7506
 def render_play(request, room_uid):
     utils.reset_room(room_uid)
@@ -16,6 +17,5 @@ def render_play(request, room_uid):
         p.hand = db_handler.get_player_card_revealed(p.player_uid, room_uid)
         p.card_count = db_handler.get_player_card_count(p.player_uid, room_uid)
 
-
-    context = {"player": player.to_dict(),"players": [i.to_dict() for i in room_players]}
+    context = {"player": player.to_dict(), "players": [i.to_dict() for i in room_players]}
     return render(request, 'play.html', context=context)

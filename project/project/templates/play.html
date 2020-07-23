@@ -1,49 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {% block title %}<title>Local Library</title>{% endblock %}
-        <!-- development version, includes helpful console warnings -->
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Jekyll v4.0.1">
+    <title>Emoj * Game Play</title>
+    <link href="../static/css/bootstrap.css" rel="stylesheet">
+
+
+    {#    {% block title %}<title>Local Library</title>{% endblock %}#}
+    {#        <!-- development version, includes helpful console warnings -->#}
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <!-- axios is a communication platform for vue to communicate to backend-->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/global_css_classes.css' %}">
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/global_css_classes.css' %}">
+{#        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css.css' %}">#}
+
     <style>
-        #play-area{
+        #play-area {
             display: flex;
             height: 100vh;
             width: 100%;
         }
-        #main-area{
+
+        #main-area {
             display: flex;
             flex-direction: column;
-            flex:7;
+            flex: 7;
             height: 100%;
-
         }
-        #options-area{
+
+        #options-area {
             flex: 2;
             height: 100%;
             background-color: green;
         }
-        #board-area{
+
+        #board-area {
             display: flex;
             flex: 8;
         }
-        #hand-area{
+
+        #hand-area .card-body{
             display: flex;
-            padding: 10px;
             justify-content: space-around;
-            flex: 3;
-            background-color: brown;
         }
-        .side-bar,#top-bar{
-            background-color: burlywood;
-            flex:1.5;
+
+        .side-bar, #top-bar {
+            flex: 1.5;
         }
-        #board-grid-area{
-            background-color: aqua;
-            flex:9;
+
+        #board-grid-area {
+            flex: 9;
             display: grid;
             padding: 10px;
         }
@@ -55,6 +67,25 @@
             border:5px solid red;
             margin: 0px;
         }
+
+        .blog-header {
+            line-height: 1;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .blog-header-logo {
+            font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+            font-size: 2.25rem;
+        }
+
+        .blog-header-logo:hover {
+            text-decoration: none;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+        }
+
     </style>
 </head>
 <body>
@@ -84,7 +115,6 @@
                       if(players.length>1){
                           return players[players.length-1];
                       }
-
                   },
                   left_player:function(){
                       if(players.length>0){
@@ -105,26 +135,62 @@
             });
         }
 </script>
-  {% block sidebar %}<!-- insert default navigation text for every page -->{% endblock %}
-  {% block content %}
-    <div id="play-area">
-        <div id="main-area">
-            <div id="top-bar">
-                <div v-for="player in middle_players" class="player" :data-player-uid="player.player_uid">[[player]]</div>
+{#{% block sidebar %}<!-- insert default navigation text for every page -->{% endblock %}#}
+
+{% block content %}
+
+    <div class="container" style="height: 100%">
+        <header class="blog-header py-3">
+            <div class="row flex-nowrap justify-content-between align-items-center">
+                <div class="col-4 pt-1">
+                    <a class="text-muted" href="#">Home</a>
+                </div>
+                <div class="col-4 text-center">
+                    <a class="blog-header-logo text-dark" href="#">Play</a>
+                </div>
+                <div class="col-4 d-flex justify-content-end align-items-center"></div>
             </div>
-            <div id="board-area">
-                <div id="left-bar" class="side-bar">
-                     <div class="player" :data-player-uid="left_player.player_uid">[[ left_player ]]</div>
+        </header>
+
+        <div id="play-area" style="padding-top: 15px;">
+            <div id="main-area">
+                <div id="top-bar" style="display: flex; justify-content: space-around">
+                    <div v-for="player in middle_players"  class="player card text-white bg-info mb-3"  :data-player-uid="player.player_uid" style="flex-grow:1; max-width: 150px; margin:0 5px;">
+                        <small class="card-header">Opponent: [[player.display_name]]</small>
+                        <div class="card-body" style="white-space:normal">
+                            <small>Details</small>
+                            {# <small v-for="(value, name) in player" style="white-space: normal">[[name]]: [[value]]</small>#}
+                        </div>
+                    </div>
                 </div>
-                <div id="board-grid-area">
-                    <button id ="test_deck" onclick="testAxios(this)"> Style me Please</button>
+                <div id="board-area">
+                    <div id="left-bar" class="side-bar">
+                        <div   class="player card text-white bg-info mb-3"  :data-player-uid="left_player.player_uid" style="flex-grow:1; max-width: 150px; margin:0 5px;">
+                        <small class="card-header">Opponent: [[left_player.display_name]]</small>
+                        <div class="card-body" style="white-space:normal">
+                            <small>Details</small>
+                            <small>left player</small>
+                        </div>
+                    </div>
+
+                    </div>
+                    <div id="board-grid-area" class="card text-white bg-secondary mb-3">
+                        <button id ="test_deck" onclick="testAxios(this)"> Style me Please</button>
+                    </div>
+                    <div id="right-bar" class="side-bar">
+                        <div class="player card text-white bg-info mb-3"  :data-player-uid="right_player.player_uid" style="flex-grow:1; max-width: 150px; margin:0 5px;">
+                        <small class="card-header">Opponent: [[right_player.display_name]]</small>
+                        <div class="card-body" style="white-space:normal">
+                            <small>Details</small>
+                            <small>right player</small>
+                        </div>
+                    </div>
+                    </div>
                 </div>
-                <div id="right-bar" class="side-bar">
-                    <div class="player" :data-player-uid="right_player.player_uid">[[ right_player ]]</div>
-                </div>
-            </div>
-            <div id="hand-area">
-                <template v-for="card in player.hand">
+                <div id="hand-area" class="card bg-danger text-white" style="margin:  5px;">
+                    <div class="card-header">Hand</div>
+                    <div class="card-body">
+                        <template v-for="card in player.hand">
                     <div v-if="selected.includes(card.card_uid)" :class="'playing-card selected ' + card.media_class" @click="toggle_selection(card.card_uid)">
 
                     </div>
@@ -132,21 +198,16 @@
 
                     </div>
                 </template>
+                    </div>
+                </div>
+            </div>
+            <div id="options-area" class="card text-white bg-success " style="min-width: 80px">
+                <div class="card-header">Options</div>
             </div>
         </div>
-        <div id="options-area">
-
-        </div>
-
-
     </div>
-
-
-
-
-
-  {% endblock %}
-  <script>
+{% endblock %}
+<script>
     function testAxios(btn) {
         btn.style.color="red";
         console.log('Test button');
@@ -154,6 +215,6 @@
             btn.innerHTML = response.data;
         });
     }
-  </script>
+</script>
 </body>
 </html>
