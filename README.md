@@ -31,18 +31,22 @@ sudo apt install postgresql postgresql-contrib
 
 ### Step 4: Get python packages
 
-**Option 1:** Downloading packages manually
-
 ```bash
-python -m pip install django psycopg2-binary
+python -m pip install -r requirements.txt
 ```
 
-**Option 2:** Using virtualenv
+#### Consider using virtualenv (Optional)
 
 Install virtualenv
 
 ```bash
 pip3 install virtualenv
+```
+
+Create an env directory for python3
+
+```bash
+virtualenv -p python3 env
 ```
 
 Enable the virtualenv
@@ -59,11 +63,15 @@ source env/bin/activate
 env\Scripts\activate.bat
 ```
 
+Use `deactivate` to stop exit the environment
+
 ### Step 5: Create the database
 
 ```bash
 sudo -u postgres psql -f project/sql/init.sql
 sudo -u postgres psql -f project/sql/create.sql
+# or
+psql -U toggleme -d project -f project/sql/create.sql
 ```
 
 ### Step 6: Run the server
