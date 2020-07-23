@@ -1,0 +1,27 @@
+version: 2.1
+
+orbs:
+  python: circleci/python@0.2.1
+  slack: circleci/slack@3.4.2
+
+jobs:
+  build-and-test:
+    executor: python/default
+    steps:
+      - checkout
+      - python/load-cache
+      - python/install-deps
+      - python/save-cache
+      - run:
+          command: ./project/manage.py test
+          name: Test
+      - slack/status:
+          webhook: "${SLACK_WEBHOOK}"
+
+workflows:
+  main:
+    jobs:
+      - build-and-test
+      - slack/approval-notification:
+          message: Pending approval
+          webhook: "${SLACK_WEBHOOK}"
