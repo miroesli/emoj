@@ -2,6 +2,8 @@ from project import db_handler
 from django.http import HttpResponse
 import random
 
+# options function where if more than two things are selected
+
 # This is the function handler to be called by api.py to pass all the json data from the axios request from the front end.
 # It is to verify that the necessary data is requried before passing it on to the necessary function.
 def function_handler(data):
@@ -19,7 +21,8 @@ def function_handler(data):
     # if the require componenets are not included again return http response error for malformed data
     # if they are call those functions and pass the parameters
 
-    # TODO: check security gut feeling for how bad this might be...
+    # put the function into a dict, try and get the provided function and execute it.
+    # if it ails return malformed data response
     if(function=='reset_room'):
         if 'room_uid' in data.keys():
             reset_room(data['room_uid'])
@@ -45,12 +48,12 @@ def deal_card(room_uid, player_uid, game_board_location):
 def transfer_card(room_uid, card_uid, origin_location, origin_player_uid, target_location, target_player_uid):
 
     # If multiple origins have been provided:
-   if(origin_location!= None and origin_player_uid != None):
-    #  TODO: return a bad response for malformed data maybe with a string detailing too many origins
-       pass
+    if(origin_location!= None and origin_player_uid != None):
+        # TODO: return a bad response for malformed data maybe with a string detailing too many origins
+        pass
     # if mutliple targets have been provided
-   if(target_location!= None and target_player_uid != None):
-       pass
+    if(target_location!= None and target_player_uid != None):
+        pass
 
     # Check if the target card is actually at the origin
     if(origin_location != None):
@@ -61,3 +64,5 @@ def transfer_card(room_uid, card_uid, origin_location, origin_player_uid, target
         pass
 
     # TODO: db_handler Update card location to whichever target was used?
+
+

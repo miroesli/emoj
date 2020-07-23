@@ -212,10 +212,13 @@
     </div>
 {% endblock %}
 <script>
+
     function testAxios(btn) {
         btn.style.color="red";
         console.log('Test button');
-        axios.get("/api/5").then((response) => {
+        axios.defaults.xsrfCookieName = 'csrftoken'
+        axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+        axios.post("/api/5").then((response) => {
             btn.innerHTML = response.data;
         });
     }
