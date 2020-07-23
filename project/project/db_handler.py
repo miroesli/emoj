@@ -37,9 +37,11 @@ def get_conn():
 class DBClassDeck(NiceObject):
     def __init__(self, deck_name, game_board_location, deck_uid, template_uid):
         self.deck_name = deck_name
-        self.game_board = game_board_location
+        self.game_board_location = game_board_location
         self.deck_uid = deck_uid
         self.template_uid = template_uid
+
+
 
 class DBClassCard(NiceObject):
     def __init__(self, card_name, card_uid, media_uuid, media_class, creation_timestamp):
@@ -49,20 +51,42 @@ class DBClassCard(NiceObject):
         self.media_class = media_class
         self.creation_timestamp = creation_timestamp
 
+class DBClassPlayer(NiceObject):
+    def __init__(self, username, display_name, player_uid):
+        self.username = username
+        self.display_name = display_name
+        self.player_uid = player_uid
 
-def get_template_decks(template_uuid):
-    conn = get_conn()
-    with conn.cursor() as curs:
 
-        query = """ select deck_name, game_board_location, deck_uid::varchar, template_uid::varchar 
-                    from decks where template_uuid = %s"""
-        curs.execute(query, [template_uuid])
-        return [DBClassDeck(*i) for i in curs]
 
 # notes on db function things
 # please include order by clause and all items selected(no select *) to future proof
 # if setting up a new entity make a DBClassMyNewEntity and make it's __init__ take all of the db values
 # use *i to take all of the select parameters(in the order they are in at the select)
+
+# player functions
+
+def get_players():
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """select username, display_name, player_uid::varchar from players"""
+        curs.execute(query)
+        # *i just places all things into the function individually in order
+        return [DBClassPlayer(*i) for i in curs]
+
+
+def get_room_players(room_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """select username, display_name, player_uid::varchar from 
+                   players p join room_players r on p.player_uid = r.player_uid
+                   where room_uid = %s"""
+        curs.execute(query[room_uid])
+        # *i just places all things into the function individually in order
+        return [DBClassPlayer(*i) for i in curs]
+
+# cards functions
+
 def get_cards():
     conn = get_conn()
     with conn.cursor() as curs:
@@ -72,9 +96,103 @@ def get_cards():
         return [DBClassCard(*i) for i in curs]
 
 
+def get_player_cards(player_uid, room_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """ select card_name, c.card_uid::varchar, media_uuid::varchar, media_class, creation_timestamp from
+                    cards c join cards_in_play p on c.card_uid = p.card_uid and p.room_uid = %s
+                    where player_uid =%s
+                    order by creation_timestamp"""
+        curs.execute(query, [room_uid, player_uid])
+        # *i just places all things into the function individually in order
+        return [DBClassCard(*i) for i in curs]
+
+
+def get_player_card_revealed(player_uid, room_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """ select card_name, c.card_uid::varchar, media_uuid::varchar, media_class, creation_timestamp from
+                        cards c join cards_in_play p on c.card_uid = p.card_uid and p.room_uid = %s
+                        where player_uid =%s and p  .revealed
+                        order by creation_timestamp"""
+        curs.execute(query, [room_uid, player_uid])
+        # *i just places all things into the function individually in order
+        return [DBClassCard(*i) for i in curs]
+
+def get_player_card_count(player_uid, room_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """ select count(*) from
+                           cards c join cards_in_play p on c.card_uid = p.card_uid and p.room_uid = %s
+                           where player_uid =%s"""
+        curs.execute(query, [room_uid, player_uid])
+        # *i just places all things into the function individually in order
+        for i in curs:
+            return i[0]
+
+
 def insert_card(card_name, media_uuid, media_class):
     conn = get_conn()
     with conn.cursor() as curs:
         query = """insert into cards(card_name, card_uid, media_uuid, media_class) values(%s, uuid_generate_v4(), %s, %s)"""
         curs.execute(query, [card_name, media_uuid, media_class])
     conn.commit()
+
+def insert_card_into_deck(deck_uid, card_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """insert into deck_cards(deck_uid, card_uid) values(%s, %s)"""
+        curs.execute(query, [deck_uid, card_uid])
+    conn.commit()
+
+
+#room functions
+
+def clear_cards_in_play(room_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query ="""delete from cards_in_play where room_uid =%s"""
+        curs.execute(query,[room_uid])
+    conn.commit()
+
+def load_cards_in_play(room_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """insert into cards_in_play(room_uid,game_board_location,order_index,player_uid,card_uid,revealed) 
+                   select %s, td.game_board_location,0,NULL,dc.card_uid,false from 
+                                rooms r join 
+                                game_template_decks td on r.template_uid = td.template_uid join 
+                                deck_cards dc on td.deck_uid = dc.deck_uid
+                                """
+        curs.execute(query, [room_uid])
+    conn.commit()
+
+#  play area functions
+
+# this pulls all of the cards with maximum index, randomize which card we draw in python
+def draw_game_board_location_top_card(room_uid, game_board_location):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """ select card_uid::varchar from cards_in_play where room_uid=%s and point_eq(game_board_location, %s)"""
+        curs.execute(query, [room_uid,game_board_location])
+        return [i[0] for i in curs]
+
+
+def update_card_location(room_uid, card_uid, game_board_location, player_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """update cards_in_play set game_board_location=NULL, player_uid=%s
+                   where room_uid = %s and card_uid = %s 
+                """
+        curs.execute(query, [player_uid, room_uid, card_uid])
+    conn.commit()
+
+#template functions
+
+def get_template_decks(template_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """ select deck_name, game_board_location, deck_uid::varchar, template_uid::varchar 
+                    from game_template_decks where template_uid = %s"""
+        curs.execute(query, [template_uid])
+        return [DBClassDeck(*i) for i in curs]

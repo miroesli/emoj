@@ -17,13 +17,12 @@ Including another URLconf
 from django.urls import re_path, path
 from django.contrib import admin
 from project.views import root, api, home, design, play
-
 urlpatterns = [
     path('', root.render_root, name='root'),
     path('api/<id>', api.id),
     path('admin/', admin.site.urls),
     path('home/', home.render_home),
     re_path(
-        r'^play/(?P<uid>[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12})', play.render_play),
+        r'^play/(?P<room_uid>[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12})', play.render_play),
     path('design/', design.render_design),
 ]

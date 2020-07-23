@@ -9,7 +9,9 @@ drop table if exists rooms cascade;
 create table rooms(
 	room_name VARCHAR(64) not null,
 	room_passcode varchar(64),
-	room_uid uuid PRIMARY KEY
+	room_uid uuid PRIMARY KEY,
+    template_uid uuid,
+    FOREIGN KEY (template_uid) REFERENCES game_templates (template_uid) on delete set null
 );
 drop table if exists room_players;
 create table room_players(
@@ -55,18 +57,26 @@ create table decks(
 	media_uid uuid,
 	FOREIGN KEY (media_uid) REFERENCES media_files (media_uid) on delete set null
 );
+
+drop table if exists deck_cards cascade;
+create table deck_cards(
+	deck_uid uuid,
+	card_uid uuid,
+	PRIMARY KEY (deck_uid,card_uid),
+	FOREIGN KEY (deck_uid) REFERENCES decks (deck_uid) on delete  cascade,
+	FOREIGN KEY (card_uid) REFERENCES cards (card_uid) on delete  cascade
+);
 drop table if exists cards_in_play;
 create table cards_in_play(
-	play_uid uuid,
-	deck_uid uuid,
+	room_uid uuid,
+	game_board_location point,
+	order_index int,
 	player_uid uuid,
 	card_uid uuid,
-	card_quantity int CHECK (card_quantity >= 0),
-	PRIMARY KEY (play_uid, card_uid),
-	FOREIGN KEY (deck_uid) REFERENCES decks (deck_uid),
-	FOREIGN KEY (card_uid) REFERENCES cards (card_uid),
-	FOREIGN KEY (player_uid) REFERENCES players (player_uid),
-	constraint chk_in_play check (deck_uid is not null or player_uid is not null)
+	revealed boolean,
+	FOREIGN KEY (room_uid) REFERENCES rooms (room_uid) on delete  cascade,
+	FOREIGN KEY (card_uid) REFERENCES cards (card_uid) on delete  cascade,
+	PRIMARY KEY (room_uid, card_uid)
 );
 
 
