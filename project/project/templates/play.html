@@ -58,6 +58,7 @@
             flex: 1.5;
         }
 
+
         #board-grid-area {
             flex: 9;
             display: grid;
@@ -69,7 +70,13 @@
         }
         .selected{
             border:5px solid red;
-            margin: 0px;
+            margin: 0px !important;
+            box-sizing: content-box;
+        }
+        .player{
+            flex-grow:1;
+            max-width: 150px;
+            margin:4px ;
         }
 
         .blog-header {
@@ -97,7 +104,7 @@
         //preload cards into js with django. we can make this dynamic later with vue
         let players = {{players | safe}};
         let player = {{player | safe}};
-        let selected = [];
+        let selected = {"players":[], "locations":[], "cards":[]};
         let play_area_vue;
         window.onload = function () {
             //vue setup. delimeters set to square brackets because django uses curly
@@ -127,12 +134,20 @@
                   }
                 },
                 methods: {
-                    toggle_selection: function (card_uid) {
-                        if(selected.indexOf(card_uid)>=0){
-                            selected.splice(selected.indexOf(card_uid),1);
+                    toggle_card_selection: function (card_uid) {
+                        if(selected.cards.indexOf(card_uid)>=0){
+                            selected.cards.splice(selected.cards.indexOf(card_uid),1);
                         }
                         else{
-                            selected.push(card_uid);
+                            selected.cards.push(card_uid);
+                        }
+                    },
+                    toggle_player_selection: function(player_uid) {
+                        if(selected.players.indexOf(player_uid)>=0){
+                            selected.players.splice(selected.players.indexOf(player_uid),1);
+                        }
+                        else{
+                            selected.players.push(player_uid);
                         }
                     }
                 }
@@ -159,7 +174,7 @@
         <div id="play-area" style="padding-top: 15px;">
             <div id="main-area">
                 <div id="top-bar" style="display: flex; justify-content: space-around">
-                    <div v-for="player in middle_players"  class="player card text-white bg-info mb-3"  :data-player-uid="player.player_uid" style="flex-grow:1; max-width: 150px; margin:0 5px;">
+                    <div v-for="player in middle_players"  class="player card text-white bg-info" v-bind:class="{ selected: selected.players.includes(player.player_uid) }" @click="toggle_player_selection(player.player_uid)">
                         <small class="card-header">Opponent: [[player.display_name]]</small>
                         <div class="card-body" style="white-space:normal">
                             <small>Details</small>
@@ -169,7 +184,7 @@
                 </div>
                 <div id="board-area">
                     <div id="left-bar" class="side-bar">
-                        <div   class="player card text-white bg-info mb-3"  :data-player-uid="left_player.player_uid" style="flex-grow:1; max-width: 150px; margin:0 5px;">
+                        <div class="player card text-white bg-info"  v-bind:class="{ selected: selected.players.includes(left_player.player_uid) }" @click="toggle_player_selection(left_player.player_uid)">
                         <small class="card-header">Opponent: [[left_player.display_name]]</small>
                         <div class="card-body" style="white-space:normal">
                             <small>Details</small>
@@ -178,11 +193,11 @@
                     </div>
 
                     </div>
-                    <div id="board-grid-area" class="card text-white bg-secondary mb-3">
+                    <div id="board-grid-area" class="card text-white bg-secondary">
                         <button id ="test_deck" onclick="testAxios(this)"> Style me Please</button>
                     </div>
                     <div id="right-bar" class="side-bar">
-                        <div class="player card text-white bg-info mb-3"  :data-player-uid="right_player.player_uid" style="flex-grow:1; max-width: 150px; margin:0 5px;">
+                        <div class="player card text-white bg-info mb-3"  v-bind:class="{ selected: selected.players.includes(right_player.player_uid) }" @click="toggle_player_selection(right_player.player_uid)" >
                         <small class="card-header">Opponent: [[right_player.display_name]]</small>
                         <div class="card-body" style="white-space:normal">
                             <small>Details</small>
@@ -195,10 +210,10 @@
                     <div class="card-header">Hand</div>
                     <div class="card-body">
                         <template v-for="card in player.hand">
-                    <div v-if="selected.includes(card.card_uid)" :class="'playing-card selected ' + card.media_class" @click="toggle_selection(card.card_uid)">
+                    <div v-if="selected.cards.includes(card.card_uid)" :class="'playing-card selected ' + card.media_class" @click="toggle_card_selection(card.card_uid)">
 
                     </div>
-                    <div v-else :class="'playing-card '+card.media_class" @click="toggle_selection(card.card_uid)">
+                    <div v-else :class="'playing-card '+card.media_class" @click="toggle_card_selection(card.card_uid)">
 
                     </div>
                 </template>
