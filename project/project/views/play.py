@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from project import db_handler, utils
 
+
 # example of uid 36e37bb4-cc52-11ea-b508-784f437b7506
 def render_play(request, room_uid):
     utils.reset_room(room_uid)
