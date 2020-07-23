@@ -16,7 +16,7 @@ insert into players(username, passcode, display_name, player_uid) values('Juan',
 
 insert into game_templates(template_name, template_uid) values('Awesome Game', :'TemplateUid');
 
-insert into rooms(room_name, room_passcode, room_uid, template_uuid) values('Awesome Room', '', :'RoomUid', :'TemplateUid');
+insert into rooms(room_name, room_passcode, room_uid, template_uid) values('Awesome Room', '', :'RoomUid', :'TemplateUid');
 
 insert into decks(deck_name, deck_uid) values('Awesome Deck', :'DeckUid');
 

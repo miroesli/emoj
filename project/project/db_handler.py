@@ -37,9 +37,11 @@ def get_conn():
 class DBClassDeck(NiceObject):
     def __init__(self, deck_name, game_board_location, deck_uid, template_uid):
         self.deck_name = deck_name
-        self.game_board = game_board_location
+        self.game_board_location = game_board_location
         self.deck_uid = deck_uid
         self.template_uid = template_uid
+
+
 
 class DBClassCard(NiceObject):
     def __init__(self, card_name, card_uid, media_uuid, media_class, creation_timestamp):
@@ -55,20 +57,14 @@ class DBClassPlayer(NiceObject):
         self.display_name = display_name
         self.player_uid = player_uid
 
-def get_template_decks(template_uuid):
-    conn = get_conn()
-    with conn.cursor() as curs:
 
-        query = """ select deck_name, game_board_location, deck_uid::varchar, template_uid::varchar 
-                    from game_template_decks where template_uid = %s"""
-        curs.execute(query, [template_uuid])
-        return [DBClassDeck(*i) for i in curs]
 
 # notes on db function things
 # please include order by clause and all items selected(no select *) to future proof
 # if setting up a new entity make a DBClassMyNewEntity and make it's __init__ take all of the db values
 # use *i to take all of the select parameters(in the order they are in at the select)
 
+# player functions
 
 def get_players():
     conn = get_conn()
@@ -89,6 +85,7 @@ def get_room_players(room_uid):
         # *i just places all things into the function individually in order
         return [DBClassPlayer(*i) for i in curs]
 
+# cards functions
 
 def get_cards():
     conn = get_conn()
@@ -147,3 +144,55 @@ def insert_card_into_deck(deck_uid, card_uid):
         query = """insert into deck_cards(deck_uid, card_uid) values(%s, %s)"""
         curs.execute(query, [deck_uid, card_uid])
     conn.commit()
+
+
+#room functions
+
+def clear_cards_in_play(room_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query ="""delete from cards_in_play where room_uid =%s"""
+        curs.execute(query,[room_uid])
+    conn.commit()
+
+def load_cards_in_play(room_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """insert into cards_in_play(room_uid,game_board_location,order_index,player_uid,card_uid,revealed) 
+                   select %s, td.game_board_location,0,NULL,dc.card_uid,false from 
+                                rooms r join 
+                                game_template_decks td on r.template_uid = td.template_uid join 
+                                deck_cards dc on td.deck_uid = dc.deck_uid
+                                """
+        curs.execute(query, [room_uid])
+    conn.commit()
+
+#  play area functions
+
+# this pulls all of the cards with maximum index, randomize which card we draw in python
+def draw_game_board_location_top_card(room_uid, game_board_location):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """ select card_uid::varchar from cards_in_play where room_uid=%s and point_eq(game_board_location, %s)"""
+        curs.execute(query, [room_uid,game_board_location])
+        return [i[0] for i in curs]
+
+
+def update_card_location(room_uid, card_uid, game_board_location, player_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """update cards_in_play set game_board_location=NULL, player_uid=%s
+                   where room_uid = %s and card_uid = %s 
+                """
+        curs.execute(query, [player_uid, room_uid, card_uid])
+    conn.commit()
+
+#template functions
+
+def get_template_decks(template_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """ select deck_name, game_board_location, deck_uid::varchar, template_uid::varchar 
+                    from game_template_decks where template_uid = %s"""
+        curs.execute(query, [template_uid])
+        return [DBClassDeck(*i) for i in curs]

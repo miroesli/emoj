@@ -10,8 +10,8 @@ create table rooms(
 	room_name VARCHAR(64) not null,
 	room_passcode varchar(64),
 	room_uid uuid PRIMARY KEY,
-    template_uuid uuid,
-    FOREIGN KEY (template_uuid) REFERENCES game_templates (template_uid) on delete set null
+    template_uid uuid,
+    FOREIGN KEY (template_uid) REFERENCES game_templates (template_uid) on delete set null
 );
 drop table if exists room_players;
 create table room_players(
@@ -69,7 +69,7 @@ create table deck_cards(
 drop table if exists cards_in_play;
 create table cards_in_play(
 	room_uid uuid,
-	location_id int,
+	game_board_location point,
 	order_index int,
 	player_uid uuid,
 	card_uid uuid,

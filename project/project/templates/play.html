@@ -31,6 +31,9 @@
             flex: 8;
         }
         #hand-area{
+            display: flex;
+            margin: 10px;
+            justify-content: space-around;
             flex: 3;
             background-color: brown;
         }
@@ -80,7 +83,7 @@
                      <div>[[ players[0] ]]</div>
                 </div>
                 <div id="board-grid-area">
-
+                    <button id ="test_deck" onclick="testAxios(this)"> Style me Please</button>
                 </div>
                 <div id="right-bar" class="side-bar">
                     <div>[[ players[players.length-1] ]]</div>
@@ -102,5 +105,14 @@
 
 
   {% endblock %}
+  <script>
+    function testAxios(btn) {
+        btn.style.color="red";
+        console.log('Test button');
+        axios.get("/api/5").then((response) => {
+            btn.innerHTML = response.data;
+        });
+    }
+  </script>
 </body>
 </html>
