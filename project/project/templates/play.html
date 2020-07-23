@@ -75,18 +75,18 @@
                     selected:selected
                 },
                 computed:{
-                  middle_players(){
+                  middle_players:function(){
                         if(players.length>2) {
                             return players.splice(1, players.length - 2);
                         }
                   },
-                  right_player(){
+                  right_player:function(){
                       if(players.length>1){
                           return players[players.length-1];
                       }
 
                   },
-                  left_player(){
+                  left_player:function(){
                       if(players.length>0){
                           return players[0];
                       }
@@ -125,10 +125,10 @@
             </div>
             <div id="hand-area">
                 <template v-for="card in player.hand">
-                    <div v-if="selected.includes(card.card_uid)" :class="'card selected ' + card.media_class" @click="toggle_selection(card.card_uid)">
+                    <div v-if="selected.includes(card.card_uid)" :class="'playing-card selected ' + card.media_class" @click="toggle_selection(card.card_uid)">
 
                     </div>
-                    <div v-else :class="'card '+card.media_class" @click="toggle_selection(card.card_uid)">
+                    <div v-else :class="'playing-card '+card.media_class" @click="toggle_selection(card.card_uid)">
 
                     </div>
                 </template>
