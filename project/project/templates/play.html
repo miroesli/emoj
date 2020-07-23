@@ -118,6 +118,7 @@
                 </div>
                 <div id="board-grid-area">
                     <button id ="test_deck" onclick="testAxios(this)"> Style me Please</button>
+                        <!-- Juan TODO: put in button here that triggers axios call to utils play card thing that passes player.playeruid, deckuid (may have to into play render function and pull deck related to room) -->
                 </div>
                 <div id="right-bar" class="side-bar">
                     <div class="player" :data-player-uid="right_player.player_uid">[[ right_player ]]</div>
@@ -140,10 +141,6 @@
 
 
     </div>
-
-
-
-
 
   {% endblock %}
   <script>
