@@ -13,7 +13,7 @@ jobs:
       - python/install-deps
       - python/save-cache
       - run:
-          command: ./project/manage.py test
+          command: ./project/manage.py test --pattern="tests_*.py"
           name: Test
       - slack/status:
           webhook: "${SLACK_WEBHOOK}"
@@ -22,6 +22,3 @@ workflows:
   main:
     jobs:
       - build-and-test
-      - slack/approval-notification:
-          message: Pending approval
-          webhook: "${SLACK_WEBHOOK}"
