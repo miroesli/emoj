@@ -4,9 +4,10 @@ Seng 499 project by Emily, Misha, Oleg, and Juan.
 
 ## Requirements
 
-- Python3
-- Postgres 12
-- Virtualenv
+- [Python 3.8](https://www.python.org/downloads/)
+- [Postgres 12](https://www.postgresql.org/download/)
+- [psycopg](https://www.psycopg.org/docs/install.html)
+- [Virtualenv (optional)](https://virtualenv.pypa.io/en/stable/installation.html)
 
 ## Running locally
 
@@ -17,11 +18,13 @@ git clone https://github.com/miroesli/emoj.git
 cd emoj
 ```
 
-### Step 2: Install python3
+### Step 2: Install python3 and header files
 
 ```bash
-sudo apt install python3
+sudo apt install python3 python3-dev
 ```
+
+<!-- libpq-dev? -->
 
 ### Step 3: Install postgres 12
 
@@ -70,6 +73,7 @@ Use `deactivate` to stop exit the environment
 ```bash
 sudo -u postgres psql -f project/sql/init.sql
 sudo -u postgres psql -f project/sql/create.sql
+sudo -u postgres psql -f project/sql/test_data.sql
 # or
 psql -U toggleme -d project -f project/sql/create.sql
 ```
@@ -77,9 +81,54 @@ psql -U toggleme -d project -f project/sql/create.sql
 ### Step 6: Run the server
 
 ```bash
+python manage.py makemigrations && python manage.py migrate
 python3 project/manage.py runserver 8000
 ```
 
 ### Step 7: View Application
 
 Access the server in browser at `http://localhost:8000`
+
+## Runnning in Docker
+
+### Requirements
+
+- [docker](https://docs.docker.com/engine/install/)
+- [docker-compose](https://docs.docker.com/compose/install/)
+
+### Execution
+
+Build and run server
+
+<!-- sudo docker build --tag emoj:1.0 . -->
+
+```bash
+docker-compose up --build
+```
+
+Migrating data
+
+```bash
+sudo docker-compose exec web python project/generate_cards.py
+sudo docker-compose exec web python manage.py migrate
+```
+
+## Testing
+
+Change directory to the project module
+
+```bash
+cd emoj/project
+```
+
+Run the test using `manage.py`
+
+```bash
+python manage.py test
+```
+
+Alternatively to specify which test files
+
+```bash
+python manage.py test --pattern="tests_*.py"
+```
