@@ -37,9 +37,11 @@ def get_conn():
 class DBClassDeck(NiceObject):
     def __init__(self, deck_name, game_board_location, deck_uid, template_uid):
         self.deck_name = deck_name
-        self.game_board = game_board_location
+        self.game_board_location = game_board_location
         self.deck_uid = deck_uid
         self.template_uid = template_uid
+
+
 
 class DBClassCard(NiceObject):
     def __init__(self, card_name, card_uid, media_uuid, media_class, creation_timestamp):
@@ -165,12 +167,32 @@ def load_cards_in_play(room_uid):
         curs.execute(query, [room_uid])
     conn.commit()
 
+#  play area functions
+
+# this pulls all of the cards with maximum index, randomize which card we draw in python
+def draw_game_board_location_top_card(room_uid, game_board_location):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """ select card_uid::varchar from cards_in_play where room_uid=%s and point_eq(game_board_location, %s)"""
+        curs.execute(query, [room_uid,game_board_location])
+        return [i[0] for i in curs]
+
+
+def update_card_location(room_uid, card_uid, game_board_location, player_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """update cards_in_play set game_board_location=NULL, player_uid=%s
+                   where room_uid = %s and card_uid = %s 
+                """
+        curs.execute(query, [player_uid, room_uid, card_uid])
+    conn.commit()
+
 #template functions
 
-def get_template_decks(template_uuid):
+def get_template_decks(template_uid):
     conn = get_conn()
     with conn.cursor() as curs:
         query = """ select deck_name, game_board_location, deck_uid::varchar, template_uid::varchar 
                     from game_template_decks where template_uid = %s"""
-        curs.execute(query, [template_uuid])
+        curs.execute(query, [template_uid])
         return [DBClassDeck(*i) for i in curs]
