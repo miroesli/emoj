@@ -32,7 +32,7 @@
         }
         #hand-area{
             display: flex;
-            margin: 10px;
+            padding: 10px;
             justify-content: space-around;
             flex: 3;
             background-color: brown;
@@ -45,6 +45,15 @@
             background-color: aqua;
             flex:9;
             display: grid;
+            padding: 10px;
+        }
+        #test_deck{
+            width: 71px;
+            height: 97px;
+        }
+        .selected{
+            border:5px solid red;
+            margin: 0px;
         }
     </style>
 </head>
@@ -53,21 +62,46 @@
         //preload cards into js with django. we can make this dynamic later with vue
         let players = {{players | safe}};
         let player = {{player | safe}};
+        let selected = [];
+        let play_area_vue;
         window.onload = function () {
             //vue setup. delimeters set to square brackets because django uses curly
-            let play_area_vue = new Vue({
+            play_area_vue = new Vue({
                 delimiters: ['[[', ']]'],
                 el: '#play-area',
                 data: {
                     players: players,
-                    player: player
+                    player: player,
+                    selected:selected
                 },
                 computed:{
                   middle_players(){
-                      return players.splice(1,players.length-2)
+                        if(players.length>2) {
+                            return players.splice(1, players.length - 2);
+                        }
+                  },
+                  right_player(){
+                      if(players.length>1){
+                          return players[players.length-1];
+                      }
+
+                  },
+                  left_player(){
+                      if(players.length>0){
+                          return players[0];
+                      }
                   }
                 },
-                methods: {}
+                methods: {
+                    toggle_selection: function (card_uid) {
+                        if(selected.indexOf(card_uid)>=0){
+                            selected.splice(selected.indexOf(card_uid),1);
+                        }
+                        else{
+                            selected.push(card_uid);
+                        }
+                    }
+                }
             });
         }
 </script>
@@ -76,21 +110,28 @@
     <div id="play-area">
         <div id="main-area">
             <div id="top-bar">
-                <div v-for="player in middle_players" >[[player]]</div>
+                <div v-for="player in middle_players" class="player" :data-player-uid="player.player_uid">[[player]]</div>
             </div>
             <div id="board-area">
                 <div id="left-bar" class="side-bar">
-                     <div>[[ players[0] ]]</div>
+                     <div class="player" :data-player-uid="left_player.player_uid">[[ left_player ]]</div>
                 </div>
                 <div id="board-grid-area">
                     <button id ="test_deck" onclick="testAxios(this)"> Style me Please</button>
                 </div>
                 <div id="right-bar" class="side-bar">
-                    <div>[[ players[players.length-1] ]]</div>
+                    <div class="player" :data-player-uid="right_player.player_uid">[[ right_player ]]</div>
                 </div>
             </div>
             <div id="hand-area">
-                <div v-for="card in player.hand" :class="card.media_class"></div>
+                <template v-for="card in player.hand">
+                    <div v-if="selected.includes(card.card_uid)" :class="'card selected ' + card.media_class" @click="toggle_selection(card.card_uid)">
+
+                    </div>
+                    <div v-else :class="'card '+card.media_class" @click="toggle_selection(card.card_uid)">
+
+                    </div>
+                </template>
             </div>
         </div>
         <div id="options-area">
