@@ -3,7 +3,6 @@ from project import utils
 
 
 def id(request, id):
-    import pdb;pdb.set_trace()
     return HttpResponse("You're looking at id %s." % id)
 
 def option(request, data):
