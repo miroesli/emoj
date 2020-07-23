@@ -83,7 +83,7 @@
                      <div>[[ players[0] ]]</div>
                 </div>
                 <div id="board-grid-area">
-                    <button id ="test_deck" onclick="testAxios()"> Style me Please</button>
+                    <button id ="test_deck" onclick="testAxios(this)"> Style me Please</button>
                 </div>
                 <div id="right-bar" class="side-bar">
                     <div>[[ players[players.length-1] ]]</div>
@@ -106,12 +106,11 @@
 
   {% endblock %}
   <script>
-    function testAxios() {
-        var btn = document.getElementById("test_deck").style.color="red";
+    function testAxios(btn) {
+        btn.style.color="red";
         console.log('Test button');
         axios.get("/api/5").then((response) => {
-            this.resp = response.data;
-            btn.value = this.resp;
+            btn.innerHTML = response.data;
         });
     }
   </script>
