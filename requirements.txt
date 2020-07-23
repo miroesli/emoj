@@ -1,0 +1,6 @@
+# django==3.0.8
+Django
+django-cors-headers==3.3.0
+djangorestframework==3.11.0
+# psycopg==2.8.5
+psycopg2-binary==2.8.5

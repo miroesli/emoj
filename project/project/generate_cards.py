@@ -1,6 +1,8 @@
+# Create base template and cards
 import db_handler
-import time
-ranks = ["ace", "two", "three", "four", "five", "six", "seven", "eight", "nine","ten", "jack", "queen", "king"]
+# import time
+ranks = ["ace", "two", "three", "four", "five", "six",
+         "seven", "eight", "nine", "ten", "jack", "queen", "king"]
 suits = ["clubs", "hearts", "diamonds", "spades"]
 
 for suit in suits:
