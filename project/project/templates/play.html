@@ -233,7 +233,10 @@
         console.log('Test button');
         axios.defaults.xsrfCookieName = 'csrftoken'
         axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
-        axios.post("/api/5").then((response) => {
+        axios.post("/api/",{
+            tag: 'test',
+            roomuid: '400'
+        }).then((response) => {
             btn.innerHTML = response.data;
         });
     }
