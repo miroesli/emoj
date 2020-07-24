@@ -3,6 +3,8 @@ import datetime
 import time
 import uuid
 # allows use of .to_dict on any object
+
+
 class NiceObject(object):
     def __str__(self):
         return str(self.__dict__)
@@ -30,9 +32,10 @@ class NiceObject(object):
         return d
 
 
-#todo add error handling
+# todo add error handling
 def get_conn():
     return psycopg2.connect("dbname='project' user='toggleme' password='ss'")
+
 
 class DBClassDeck(NiceObject):
     def __init__(self, deck_name, game_board_location, deck_uid, template_uid):
@@ -40,7 +43,6 @@ class DBClassDeck(NiceObject):
         self.game_board_location = game_board_location
         self.deck_uid = deck_uid
         self.template_uid = template_uid
-
 
 
 class DBClassCard(NiceObject):
@@ -51,12 +53,12 @@ class DBClassCard(NiceObject):
         self.media_class = media_class
         self.creation_timestamp = creation_timestamp
 
+
 class DBClassPlayer(NiceObject):
     def __init__(self, username, display_name, player_uid):
         self.username = username
         self.display_name = display_name
         self.player_uid = player_uid
-
 
 
 # notes on db function things
@@ -86,6 +88,7 @@ def get_room_players(room_uid):
         return [DBClassPlayer(*i) for i in curs]
 
 # cards functions
+
 
 def get_cards():
     conn = get_conn()
@@ -119,6 +122,7 @@ def get_player_card_revealed(player_uid, room_uid):
         # *i just places all things into the function individually in order
         return [DBClassCard(*i) for i in curs]
 
+
 def get_player_card_count(player_uid, room_uid):
     conn = get_conn()
     with conn.cursor() as curs:
@@ -138,6 +142,7 @@ def insert_card(card_name, media_uuid, media_class):
         curs.execute(query, [card_name, media_uuid, media_class])
     conn.commit()
 
+
 def insert_card_into_deck(deck_uid, card_uid):
     conn = get_conn()
     with conn.cursor() as curs:
@@ -146,14 +151,15 @@ def insert_card_into_deck(deck_uid, card_uid):
     conn.commit()
 
 
-#room functions
+# room functions
 
 def clear_cards_in_play(room_uid):
     conn = get_conn()
     with conn.cursor() as curs:
-        query ="""delete from cards_in_play where room_uid =%s"""
-        curs.execute(query,[room_uid])
+        query = """delete from cards_in_play where room_uid =%s"""
+        curs.execute(query, [room_uid])
     conn.commit()
+
 
 def load_cards_in_play(room_uid):
     conn = get_conn()
@@ -170,11 +176,13 @@ def load_cards_in_play(room_uid):
 #  play area functions
 
 # this pulls all of the cards with maximum index, randomize which card we draw in python
+
+
 def draw_game_board_location_top_card(room_uid, game_board_location):
     conn = get_conn()
     with conn.cursor() as curs:
         query = """ select card_uid::varchar from cards_in_play where room_uid=%s and point_eq(game_board_location, %s)"""
-        curs.execute(query, [room_uid,game_board_location])
+        curs.execute(query, [room_uid, game_board_location])
         return [i[0] for i in curs]
 
 
@@ -187,7 +195,8 @@ def update_card_location(room_uid, card_uid, game_board_location, player_uid):
         curs.execute(query, [player_uid, room_uid, card_uid])
     conn.commit()
 
-#template functions
+# template functions
+
 
 def get_template_decks(template_uid):
     conn = get_conn()
