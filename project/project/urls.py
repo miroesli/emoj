@@ -22,8 +22,8 @@ from project.views import root, api, home, design, play
 urlpatterns = [
     path('', root.render_root, name='root'),
     # path('', TemplateView.as_view(template_name='home.html'), name='home'),
-    path('api/<id>', api.id),
-    path('api/', api.option),
+    path('api/<int:id>', api.id),
+    path('api/options', api.option),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('home/', home.render_home, name='home'),

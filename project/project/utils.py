@@ -3,11 +3,11 @@ from django.http import HttpResponse
 import random
 
 # Dictionary of functions with their tags.
-functions = {
-    'reset': reset_room,
-    'deal': deal_card,
-    'transfer': transfer_card,
-}
+#functions = {
+#    'reset': reset_room,
+#    'deal': deal_card,
+#    'transfer': transfer_card,
+#}
 
 # After an item  is selected scan for what possible functions are supported by the current
 # combination of selected options.
@@ -60,7 +60,6 @@ def deal_card(room_uid, player_uid, game_board_location):
 def transfer_card(room_uid, entity_type1, entity_type2, entity_id1, entity_id2):
     if entity_type1 not in ['card', 'player', 'location']:
         pass #throws err
-    if entity_type2 not in ['card', 'player', 'location']:
+    elif entity_type2 not in ['card', 'player', 'location']:
         pass #throws err
-    else:
-        pass #do stuff
+    room = db_handler.get_room(room_uid)

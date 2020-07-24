@@ -61,6 +61,12 @@ class DBClassPlayer(NiceObject):
         self.player_uid = player_uid
 
 
+class DBClassRoom(NiceObject):
+    def __init__(self, room_name, room_uid, template_uid):
+        self.room_name = room_name
+        self.room_uid = room_uid
+        self.template_uid = template_uid
+
 # notes on db function things
 # please include order by clause and all items selected(no select *) to future proof
 # if setting up a new entity make a DBClassMyNewEntity and make it's __init__ take all of the db values
@@ -152,6 +158,14 @@ def insert_card_into_deck(deck_uid, card_uid):
 
 
 # room functions
+
+def get_room(room_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """select room_name, room_uid::varchar, template_uid::varchar from rooms where room_uid =%s """
+        curs.execute(query, [room_uid])
+        for i in curs:
+            return DBClassRoom(*i)
 
 def clear_cards_in_play(room_uid):
     conn = get_conn()

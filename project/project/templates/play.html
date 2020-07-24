@@ -104,6 +104,7 @@
         //preload cards into js with django. we can make this dynamic later with vue
         let players = {{players | safe}};
         let player = {{player | safe}};
+        let room = {{room | safe}};
         let selected = {"players":[], "locations":[], "cards":[]};
         let play_area_vue;
         window.onload = function () {
@@ -141,6 +142,7 @@
                         else{
                             selected.cards.push(card_uid);
                         }
+                        play_area_vue.get_options();
                     },
                     toggle_player_selection: function(player_uid) {
                         if(selected.players.indexOf(player_uid)>=0){
@@ -149,7 +151,23 @@
                         else{
                             selected.players.push(player_uid);
                         }
+                        play_area_vue.get_options();
+                    },
+                    get_options:function(){
+                        axios.defaults.xsrfCookieName = 'csrftoken'
+                        axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+                        axios.get("/api/options",{
+                            params: {
+                              player_uid:player.player_uid,
+                              room_uid:room.room_uid,
+                              selected:selected
+                            },
+                        }).then((response) => {
+                            debugger;
+                            alert(response);
+                        });
                     }
+
                 }
             });
         }
