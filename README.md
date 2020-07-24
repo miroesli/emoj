@@ -89,6 +89,14 @@ python3 project/manage.py runserver 8000
 
 Access the server in browser at `http://localhost:8000`
 
+## Create User
+
+Run createsuperuser with manage.py
+
+```bash
+python manage.py createsuperuser
+```
+
 ## Runnning in Docker
 
 ### Requirements
