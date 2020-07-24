@@ -9,13 +9,19 @@
 </head>
 
 <body>
-  
+
   {% block sidebar %}
   <!-- insert default navigation text for every page -->{% endblock %}
   {% block content %}
   <h1>home</h1>
-  <p>hello world</p>
-  <div id="please"></div>
+  {% if user.is_authenticated %}
+  Hi {{ user.username }}!
+  <p><a href="{% url 'logout' %}">logout</a></p>
+  {% else %}
+  <p>You are not logged in</p>
+  <a href=" {% url 'login' %}">login</a>
+  {% endif %}
+  <p id="please"></p>
   {% endblock %}
   <script>
     var axiosResult = document.getElementById('please');
@@ -27,3 +33,6 @@
 </body>
 
 </html>
+
+
+<!-- templates/home.html -->

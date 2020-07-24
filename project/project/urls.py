@@ -14,16 +14,20 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 # from django.conf.urls import url
-from django.urls import re_path, path
+from django.urls import re_path, path, include
 from django.contrib import admin
 from project.views import root, api, home, design, play
+# from django.views.generic.base import TemplateView
+
 urlpatterns = [
     path('', root.render_root, name='root'),
+    # path('', TemplateView.as_view(template_name='home.html'), name='home'),
     path('api/<id>', api.id),
     # TODO: add/modify api url for axios requests to send all the data to backend.
     path('admin/', admin.site.urls),
-    path('home/', home.render_home),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('home/', home.render_home, name='home'),
     re_path(
-        r'^play/(?P<room_uid>[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12})', play.render_play),
+        r'^play/(?P<room_uid>[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12})', play.render_play, name='play'),
     path('design/', design.render_design),
 ]
