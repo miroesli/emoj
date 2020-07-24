@@ -23,7 +23,7 @@ urlpatterns = [
     path('', root.render_root, name='root'),
     # path('', TemplateView.as_view(template_name='home.html'), name='home'),
     path('api/<id>', api.id),
-    # TODO: add/modify api url for axios requests to send all the data to backend.
+    path('api/', api.option),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('home/', home.render_home, name='home'),

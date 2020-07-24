@@ -2,33 +2,48 @@ from project import db_handler
 from django.http import HttpResponse
 import random
 
-# options function where if more than two things are selected
+# Dictionary of functions with their tags.
+functions = {
+    'reset': reset_room,
+    'deal': deal_card,
+    'transfer': transfer_card,
+}
+
+# After an item  is selected scan for what possible functions are supported by the current
+# combination of selected options.
+def display_options(data):
+    # TODO: selecting options handler function where if more than two things are selected
+    response = HttpResponse()
+
+    #Response should be json with the id/tag of the different options.
+    response.status_code = 404
+    
+    return response
+
+
 
 # This is the function handler to be called by api.py to pass all the json data from the axios request from the front end.
 # It is to verify that the necessary data is requried before passing it on to the necessary function.
 def function_handler(data):
     response = HttpResponse()
+
     # Check if the data includes a function tag.
     if 'tag' in data.keys():
         function = data['tag']
     else:
-        # TODO: if no tag exists return correct http response error for malformed data
         response.status_code = 400
-        response.content = 'No tag provided'
-        pass
+        response.content = 'No function provided'
 
-    # TODO: loop over every possible function checking (replace with python switch statement equivalent)
-    # if the require componenets are not included again return http response error for malformed data
-    # if they are call those functions and pass the parameters
+    # Check if the requested function has been implemented.
+    if function in functions.keys():
+        #TODO: get http response from those functions
+        functions[function](data)
+    else:
+        response.status_code = 404
+        response.content = 'No such implemented function'
 
-    # put the function into a dict, try and get the provided function and execute it.
-    # if it ails return malformed data response
-    if(function=='reset_room'):
-        if 'room_uid' in data.keys():
-            reset_room(data['room_uid'])
-        else:
-            # TODO: if the necessary keys are not in the ata throw http response error for malformed data
-            pass
+    return response
+
 
 
 def reset_room(room_uid):
