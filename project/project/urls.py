@@ -20,6 +20,7 @@ from project.views import root, api, home, design, play
 urlpatterns = [
     path('', root.render_root, name='root'),
     path('api/<id>', api.id),
+    # TODO: add/modify api url for axios requests to send all the data to backend.
     path('admin/', admin.site.urls),
     path('home/', home.render_home),
     re_path(
