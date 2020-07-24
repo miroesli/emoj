@@ -9,6 +9,7 @@ jobs:
     executor: python/default
     # docker:
     #   - image: circleci/python:3.8
+    working_directory: ./project
     steps:
       - checkout
       - python/load-cache
