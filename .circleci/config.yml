@@ -7,13 +7,16 @@ orbs:
 jobs:
   build-and-test:
     executor: python/default
+    # docker:
+    #   - image: circleci/python:3.8
     steps:
       - checkout
       - python/load-cache
       - python/install-deps
       - python/save-cache
       - run:
-          command: ./project/manage.py test --pattern="tests_*.py"
+          # update once moved to root
+          command: ./project/manage.py test --pattern="test_*.py"
           name: Test
       - slack/status:
           webhook: "${SLACK_WEBHOOK}"
