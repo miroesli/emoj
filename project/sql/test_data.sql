@@ -25,9 +25,9 @@ insert into rooms(room_name, room_passcode, room_uid, template_uid) values('Awes
 
 insert into decks(deck_name, deck_uid) values('Awesome Deck', :'DeckUid');
 
-insert into room_players(player_uuid, room_uid) values (:'EmilyUid', :'RoomUid');
-insert into room_players(player_uuid, room_uid) values (:'MishaUid', :'RoomUid');
-insert into room_players(player_uuid, room_uid) values (:'OlegUid', :'RoomUid');
-insert into room_players(player_uuid, room_uid) values (:'JuanUid', :'RoomUid');
+insert into room_players(player_uid, room_uid) values (:'EmilyUid', :'RoomUid');
+insert into room_players(player_uid, room_uid) values (:'MishaUid', :'RoomUid');
+insert into room_players(player_uid, room_uid) values (:'OlegUid', :'RoomUid');
+insert into room_players(player_uid, room_uid) values (:'JuanUid', :'RoomUid');
 
 insert into game_template_decks(game_board_location_x, game_board_location_y, deck_uid, template_uid) values (0,0, :'DeckUid', :'TemplateUid');

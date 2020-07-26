@@ -2,48 +2,82 @@ from project import db_handler
 from django.http import HttpResponse
 import random
 
-# Dictionary of functions with their tags.
-# functions = {
-#    'reset': reset_room,
-#    'deal': deal_card,
-#    'transfer': transfer_card,
-# }
-
 # After an item  is selected scan for what possible functions are supported by the current
 # combination of selected options.
 
 
-def display_options(data):
-    # TODO: selecting options handler function where if more than two things are selected
-    response = HttpResponse()
+def display_options(room_uid, player_uid, selected):
+    # enrich selected with player info
+    for i in range(len(selected.get('players'))):
+        player = db_handler.get_player(room_uid, selected.get('players')[i])
+        if player:
+            selected.get('players')[i] = player
+        else:
+            pass  # throw error
 
-    # Response should be json with the id/tag of the different options.
-    response.status_code = 404
+    # enrich selected with card info
+    for i in range(len(selected.get('cards'))):
+        card = db_handler.get_card(selected.get('cards')[i])
+        if card:
+            selected.get('cards')[i] = card
+        else:
+            pass  # throw error
+
+    # if there is more than 1 location selected there are no options
+    if len(selected.get('locations')) > 1:
+        return []
+    elif len(selected.get('locations')) == 1:
+        # gets cards at location
+        location_cards = db_handler.get_location_cards(
+            room_uid, selected.get('locations')[0])
+        # if an empty location selected
+        if len(location_cards) == 0:
+            # if the only thing selected is an empty location then we have no options
+            # also if there is a player and empty location selected we also have no options
+            if len(selected.get('cards')) == 0 or len(selected.get('players')) > 0:
+                return []
+            # empty location and cards selected
+            else:
+
+                pass  # place cards revealed or not revealed
+        # non empty location selected
+        else:
+            # if we also select a player
+            if len(selected.get('players')) > 0:
+                # deal that player a card(for each revealed) + deal player X hidden cards
+                pass
+            # only non empty location selected
+            else:
+                # draw a card(for each revealed) + draw player X hidden cards
+                pass
+    # zero locations
+    else:
+        # player selected
+        if len(selected.get('players')) > 0:
+            if len(selected.get('cards')) > 0:
+                # at least one player, card and location selected
+                if len(selected.get('locations')) > 0:
+                    return []
+                else:
+                    if len(selected.get('cards')) == 1 and len(selected.get('players')) == 1:
+                        result = []
+                        return ["give all to " + selected.get('players')[0].display_name]
+        # only cards are selected
+        else:
+            result = []
+            for card in selected.get('cards'):
+                if not card.revealed:
+                    result.append({"option": "reveal", "card_uid": card.card_uid,
+                                   "option_text": "reveal " + card.card_name})
+            return result
 
     return response
 
 
 # This is the function handler to be called by api.py to pass all the json data from the axios request from the front end.
 # It is to verify that the necessary data is requried before passing it on to the necessary function.
-def function_handler(data):
-    response = HttpResponse()
-
-    # Check if the data includes a function tag.
-    if 'tag' in data.keys():
-        function = data['tag']
-    else:
-        response.status_code = 400
-        response.content = 'No function provided'
-
-    # Check if the requested function has been implemented.
-    if function in functions.keys():
-        # TODO: get http response from those functions
-        functions[function](data)
-    else:
-        response.status_code = 404
-        response.content = 'No such implemented function'
-
-    return response
+def function_handler(room_uid, player_uid, option, selected):
+    pass
 
 
 def reset_room(room_uid):

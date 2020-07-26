@@ -18,7 +18,6 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         {% load static %}
         <link rel="stylesheet" type="text/css" href="{% static 'css/global_css_classes.css' %}">
-{#        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css.css' %}">#}
 
     <style>
         #container{
@@ -102,10 +101,9 @@
 <body>
 <script>
         //preload cards into js with django. we can make this dynamic later with vue
-        let players = {{players | safe}};
-        let player = {{player | safe}};
-        let room = {{room | safe}};
+        let play_area = {"players":{{players | safe}},"player":{{player | safe}},"room":{{room | safe}}}
         let selected = {"players":[], "locations":[], "cards":[]};
+        let options =[];
         let play_area_vue;
         window.onload = function () {
             //vue setup. delimeters set to square brackets because django uses curly
@@ -113,24 +111,24 @@
                 delimiters: ['[[', ']]'],
                 el: '#play-area',
                 data: {
-                    players: players,
-                    player: player,
-                    selected:selected
+                    play_area:play_area,
+                    selected:selected,
+                    options:options
                 },
                 computed:{
                   middle_players:function(){
-                        if(players.length>2) {
-                            return players.splice(1, players.length - 2);
+                        if(play_area.players.length>2) {
+                            return play_area.players.splice(1, play_area.players.length - 2);
                         }
                   },
                   right_player:function(){
-                      if(players.length>1){
-                          return players[players.length-1];
+                      if(play_area.players.length>1){
+                          return play_area.players[play_area.players.length-1];
                       }
                   },
                   left_player:function(){
-                      if(players.length>0){
-                          return players[0];
+                      if(play_area.players.length>0){
+                          return play_area.players[0];
                       }
                   }
                 },
@@ -158,13 +156,15 @@
                         axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
                         axios.get("/api/options",{
                             params: {
-                              player_uid:player.player_uid,
-                              room_uid:room.room_uid,
+                              player_uid:play_area.player.player_uid,
+                              room_uid:play_area.room.room_uid,
                               selected:selected
                             },
                         }).then((response) => {
-                            debugger;
-                            alert(response);
+                            options = response.options;
+
+                        }).catch((response) => {
+                            console.log(response);
                         });
                     }
 
@@ -227,7 +227,7 @@
                 <div id="hand-area" class="card bg-danger text-white">
                     <div class="card-header">Hand</div>
                     <div class="card-body">
-                        <template v-for="card in player.hand">
+                        <template v-for="card in play_area.player.hand">
                     <div v-if="selected.cards.includes(card.card_uid)" :class="'playing-card selected ' + card.media_class" @click="toggle_card_selection(card.card_uid)">
 
                     </div>

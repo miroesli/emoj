@@ -37,21 +37,28 @@ def get_conn():
     return psycopg2.connect("dbname='project' user='toggleme' password='ss'")
 
 
+class DBClassPOINT(NiceObject):
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
 class DBClassDeck(NiceObject):
-    def __init__(self, deck_name, game_board_location, deck_uid, template_uid):
+    def __init__(self, deck_name, deck_uid, template_uid,game_board_location_x=None, game_board_location_y=None):
         self.deck_name = deck_name
-        self.game_board_location = game_board_location
+        self.game_board_location = DBClassPOINT(game_board_location_x, game_board_location_y)
         self.deck_uid = deck_uid
         self.template_uid = template_uid
 
 
 class DBClassCard(NiceObject):
-    def __init__(self, card_name, card_uid, media_uuid, media_class, creation_timestamp):
+    def __init__(self, card_name, card_uid, media_uuid, media_class, creation_timestamp, revealed=None):
         self.card_name = card_name
         self.card_uid = card_uid
         self.media_uuid = media_uuid
         self.media_class = media_class
         self.creation_timestamp = creation_timestamp
+        if revealed is not None:
+            self.revealed = revealed
 
 
 class DBClassPlayer(NiceObject):
@@ -73,6 +80,16 @@ class DBClassRoom(NiceObject):
 # use *i to take all of the select parameters(in the order they are in at the select)
 
 # player functions
+def get_player(player_uid, room_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """select username, display_name, p.player_uid::varchar from 
+                   players p join room_players rp on p.player_uid = rp.player_uid 
+                   where p.player_uid=%s and room_uid=%s"""
+        curs.execute(query,[player_uid, room_uid])
+        for i in curs:
+            return DBClassPlayer(*i)
+
 
 
 def get_players():
@@ -95,6 +112,16 @@ def get_room_players(room_uid):
         return [DBClassPlayer(*i) for i in curs]
 
 # cards functions
+
+
+def get_card(card_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """ select card_name, card_uid::varchar, media_uuid::varchar, media_class, creation_timestamp 
+                    from cards where card_uid =%s order by creation_timestamp """
+        curs.execute(query, [card_uid])
+        # *i just places all things into the function individually in order
+        return [DBClassCard(*i) for i in curs]
 
 
 def get_cards():
@@ -180,8 +207,8 @@ def clear_cards_in_play(room_uid):
 def load_cards_in_play(room_uid):
     conn = get_conn()
     with conn.cursor() as curs:
-        query = """insert into cards_in_play(room_uid,game_board_location,order_index,player_uid,card_uid,revealed) 
-                   select %s, td.game_board_location,0,NULL,dc.card_uid,false from 
+        query = """insert into cards_in_play(room_uid,game_board_location_x,game_board_location_y,order_index,player_uid,card_uid,revealed) 
+                   select %s, td.game_board_location_x,td.game_board_location_y,0,NULL,dc.card_uid,false from 
                                 rooms r join 
                                 game_template_decks td on r.template_uid = td.template_uid join 
                                 deck_cards dc on td.deck_uid = dc.deck_uid
@@ -189,23 +216,32 @@ def load_cards_in_play(room_uid):
         curs.execute(query, [room_uid])
     conn.commit()
 
-#  play area functions
 
+#  play area functions
+def get_location_cards(room_uid,game_board_location_x,game_board_location_y):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """ select card_name, card_uid, media_uuid, media_class, creation_timestamp, revealed 
+                    from cards_in_play cip join cards c on cip.card_uid = c.card_uid 
+                    where room_uid =%s and game_board_location_x =%s and game_board_location_y =%s
+        """
+        curs.execute(query, [room_uid, game_board_location_x, game_board_location_y])
+        return [DBClassCard(*i) for i in curs]
 # this pulls all of the cards with maximum index, randomize which card we draw in python
 
 
 def draw_game_board_location_top_card(room_uid, game_board_location):
     conn = get_conn()
     with conn.cursor() as curs:
-        query = """ select card_uid::varchar from cards_in_play where room_uid=%s and point_eq(game_board_location, %s)"""
-        curs.execute(query, [room_uid, game_board_location])
+        query = """ select card_uid::varchar from cards_in_play where room_uid=%s and game_board_location_x=%s and game_board_location_y=%s"""
+        curs.execute(query, [room_uid, game_board_location.x,game_board_location.y])
         return [i[0] for i in curs]
 
 
 def update_card_location(room_uid, card_uid, game_board_location, player_uid):
     conn = get_conn()
     with conn.cursor() as curs:
-        query = """update cards_in_play set game_board_location=NULL, player_uid=%s
+        query = """update cards_in_play set game_board_location_x=NULL,game_board_location_y=NULL, player_uid=%s
                    where room_uid = %s and card_uid = %s 
                 """
         curs.execute(query, [player_uid, room_uid, card_uid])
@@ -217,7 +253,7 @@ def update_card_location(room_uid, card_uid, game_board_location, player_uid):
 def get_template_decks(template_uid):
     conn = get_conn()
     with conn.cursor() as curs:
-        query = """ select deck_name, game_board_location, deck_uid::varchar, template_uid::varchar 
+        query = """ select null, deck_uid::varchar, template_uid::varchar,game_board_location_x,game_board_location_y
                     from game_template_decks where template_uid = %s"""
         curs.execute(query, [template_uid])
         return [DBClassDeck(*i) for i in curs]
