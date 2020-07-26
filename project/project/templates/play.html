@@ -171,13 +171,14 @@
                         });
                     },
                     take_action:function(option){
+                        debugger;
                         axios.defaults.xsrfCookieName = 'csrftoken'
                         axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
                         axios.post("/api/options",{
                               player_uid:play_area.player.player_uid,
                               room_uid:play_area.room.room_uid,
                               selected:selected,
-                              option:option
+                              option:option.option
 
                         }).then((response) => {
                            debugger;

@@ -13,6 +13,8 @@ create table rooms(
 	room_passcode varchar(64),
 	room_uid uuid PRIMARY KEY,
     template_uid uuid,
+    active_player_uid uuid,
+    FOREIGN KEY (active_player_uid) REFERENCES players (player_uid) on delete set null,
     FOREIGN KEY (template_uid) REFERENCES game_templates (template_uid) on delete set null
 );
 drop table if exists room_players;
@@ -82,4 +84,12 @@ create table cards_in_play(
 	FOREIGN KEY (room_uid) REFERENCES rooms (room_uid) on delete  cascade,
 	FOREIGN KEY (card_uid) REFERENCES cards (card_uid) on delete  cascade,
 	PRIMARY KEY (room_uid, card_uid)
+);
+drop table if exists play_log;
+create table play_log(
+    message uuid PRIMARY KEY,
+    room_uid uuid,
+    message varchar(255),
+    creation_timestamp timestamp,
+    FOREIGN KEY (room_uid) REFERENCES rooms (room_uid) on delete  cascade
 );
