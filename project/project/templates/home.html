@@ -16,6 +16,7 @@
   <h1>home</h1>
   {% if user.is_authenticated %}
   Hi {{ user.username }}!
+  <p><a href="/play/36e37bb4-cc52-11ea-b508-784f437b7506">Play</a></p>
   <p><a href="{% url 'logout' %}">logout</a></p>
   {% else %}
   <p>You are not logged in</p>
