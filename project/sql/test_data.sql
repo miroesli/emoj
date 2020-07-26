@@ -25,4 +25,4 @@ insert into room_players(player_uuid, room_uid) values (:'MishaUid', :'RoomUid')
 insert into room_players(player_uuid, room_uid) values (:'OlegUid', :'RoomUid');
 insert into room_players(player_uuid, room_uid) values (:'JuanUid', :'RoomUid');
 
-insert into game_template_decks(deck_name, game_board_location, deck_uid, template_uid) values ('Awesome Deck', point(0,0), :'DeckUid', :'TemplateUid');
+insert into game_template_decks(game_board_location_x, game_board_location_y, deck_uid, template_uid) values (0,0, :'DeckUid', :'TemplateUid');

@@ -28,11 +28,13 @@ create table game_templates(
 );
 drop table if exists game_template_decks;
 create table game_template_decks(
-	deck_name VARCHAR(64) not null,
-	game_board_location point,
-	deck_uid uuid PRIMARY key,
+	game_board_location_x int,
+	game_board_location_y int,
+	deck_uid uuid,
 	template_uid uuid,
-	FOREIGN KEY (template_uid) REFERENCES game_templates (template_uid) on delete cascade
+	PRIMARY KEY(game_board_location_x, game_board_location_y, template_uid),
+	FOREIGN KEY (template_uid) REFERENCES game_templates (template_uid) on delete cascade,
+	FOREIGN KEY(deck_uid) REFERENCES decks (deck_uid) on delete restrict
 );
 --media stored in media/uuid.png
 --make a job to crawl that directory and load this table
@@ -69,7 +71,8 @@ create table deck_cards(
 drop table if exists cards_in_play;
 create table cards_in_play(
 	room_uid uuid,
-	game_board_location point,
+	game_board_location_x int,
+	game_board_location_y int,
 	order_index int,
 	player_uid uuid,
 	card_uid uuid,
@@ -78,6 +81,3 @@ create table cards_in_play(
 	FOREIGN KEY (card_uid) REFERENCES cards (card_uid) on delete  cascade,
 	PRIMARY KEY (room_uid, card_uid)
 );
-
-
- 
