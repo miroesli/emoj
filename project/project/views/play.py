@@ -15,34 +15,37 @@ def render_play(request, room_uid):
     else:
         utils.reset_room(room_uid)
         # replace with get room players when data is ready
-        room_players = db_handler.get_players()
+        db_room_players = db_handler.get_players()
         # we will need to get a specific player via cookies eventually but for now I set the first player as active
-
         # utils.deal_card(room_uid, p.player_uid, '(0,0)')
-        # # TODO HERE
-        # print(request.user)
-        # print(request.COOKIES)
-        # player_index = 0
-        # player = room_players[player_index]  # base this from session info
-        # # this will also have to change with above excluding the current player
-        # # room_players = []
 
-        # # for i in range(room_players):
-        # #     if i != player_index:
-        # #         room_players.append(room_players[i])
-        # room_players[1:]
-        # print(room_players[0].username)
+        # Get cookie
+        print(request.COOKIES)
 
-        # player.hand = [i.to_dict() for i in db_handler.get_player_cards(
-        #     player.player_uid, room_uid)]
+        for index, player in enumerate(db_room_players):
+            if str(player.username) == str(request.user):
+                player_index = index
+                break
+        print("player", db_room_players[player_index].username)
+        player = db_room_players[player_index]  # base this from session info
+        # this will also have to change with above excluding the current player
+        room_players = []
+
+        # TODO check if need to append this starting from right of player
+        for i in range(len(db_room_players)):
+            if i != player_index:
+                print("appended", db_room_players[i])
+                room_players.append(db_room_players[i])
+        # print("other players", room_players)
+
+        player.hand = [i.to_dict() for i in db_handler.get_player_cards(
+            player.player_uid, room_uid)]
 
         for i in range(5):
             for p in room_players:
                 utils.deal_card(room_uid, p.player_uid,
                                 db_handler.DBClassPOINT(0, 0))
-        player = room_players[0]  # base this from session info
-        # this will also have to change with above excluding the current player
-        room_players = room_players[1:]
+
         player.hand = [i.to_dict() for i in db_handler.get_player_cards(
             player.player_uid, room_uid)]
         for p in room_players:
