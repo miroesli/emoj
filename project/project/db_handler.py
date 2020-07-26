@@ -42,6 +42,13 @@ class DBClassPOINT(NiceObject):
         self.x = x
         self.y = y
 
+
+class DBClassTemplate(NiceObject):
+    def __init__(self,template_name, template_uid):
+        self.template_name = template_name
+        self.template_uid = template_uid
+
+
 class DBClassDeck(NiceObject):
     def __init__(self, deck_name, deck_uid, template_uid,game_board_location_x=None, game_board_location_y=None):
         self.deck_name = deck_name
@@ -270,6 +277,40 @@ def update_card_location(room_uid, card_uid, game_board_location, player_uid):
     conn.commit()
 
 # template functions
+
+
+def get_all_templates():
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query ="""select template_name, template_uid::varchar from game_templates"""
+        curs.execute(query)
+        return [DBClassTemplate(*i) for i in curs]
+
+
+def create_new_room(room_name, room_passcode, room_uid, template_uid, active_player_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """insert into rooms (room_name, room_passcode, room_uid, template_uid, active_player_uid)
+                    values(%s,%s,%s,%s,%s)"""
+        curs.execute(query, [room_name, room_passcode, room_uid, template_uid, active_player_uid])
+        conn.commit()
+
+
+def create_new_template(template_name, template_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """insert into templates (template_name, template_name) values(%s,%s)"""
+        curs.execute(query, [template_name, template_uid])
+        conn.commit()
+
+
+def insert_template_deck(template_uid, deck_uid, game_board_location_x, game_board_location_y):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """insert into template_decks(deck_uid, template_uid, game_board_location_x, game_board_location_y)
+                   values (%s,%s,%s,%s) """
+        curs.execute(query, [template_uid, deck_uid, game_board_location_x, game_board_location_y])
+        conn.commit()
 
 
 def get_template_decks(template_uid):

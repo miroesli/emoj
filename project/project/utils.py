@@ -37,8 +37,8 @@ def display_options(room_uid, player_uid, selected):
                 return []
             # empty location and cards selected
             else:
-                return [{"option": "place", "option_text": "place selected card(s)"}]
-                pass  # place cards revealed or not revealed
+                return [{"option": "place", "option_text": "place selected card(s) face up"},
+                        {"option": "place", "option_text": "place selected card(s) face down"}]
         # non empty location selected
         else:
             # if we also select a player
@@ -73,6 +73,9 @@ def display_options(room_uid, player_uid, selected):
 # This is the function handler to be called by api.py to pass all the json data from the axios request from the front end.
 # It is to verify that the necessary data is requried before passing it on to the necessary function.
 def function_handler(room_uid, player_uid, option, selected):
+    #decipher option
+    #execute
+    #log as a action
     import pdb
     pdb.set_trace()
 
