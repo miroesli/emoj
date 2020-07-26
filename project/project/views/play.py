@@ -26,7 +26,7 @@ def render_play(request, room_uid):
             if str(player.username) == str(request.user):
                 player_index = index
                 break
-        print("player", db_room_players[player_index].username)
+        # print("player", db_room_players[player_index].username)
         player = db_room_players[player_index]  # base this from session info
         # this will also have to change with above excluding the current player
         room_players = []
@@ -34,7 +34,7 @@ def render_play(request, room_uid):
         # TODO check if need to append this starting from right of player
         for i in range(len(db_room_players)):
             if i != player_index:
-                print("appended", db_room_players[i])
+                # print("appended", db_room_players[i])
                 room_players.append(db_room_players[i])
         # print("other players", room_players)
 
