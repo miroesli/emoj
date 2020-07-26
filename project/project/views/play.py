@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from project import db_handler, utils
 
+def load_play_info(room_uid):
+ pass
+
 
 # example of uid 36e37bb4-cc52-11ea-b508-784f437b7506
 def render_play(request, room_uid):
@@ -13,7 +16,7 @@ def render_play(request, room_uid):
         # we will need to get a specific player via cookies eventually but for now I set the first player as active
         for i in range(5):
             for p in room_players:
-                utils.deal_card(room_uid, p.player_uid, '(0,0)')
+                utils.deal_card(room_uid, p.player_uid, db_handler.DBClassPOINT(0,0))
         player = room_players[0] # base this from session info
         room_players = room_players[1:] #this will also have to change with above excluding the current player
         player.hand = [i.to_dict() for i in db_handler.get_player_cards(player.player_uid, room_uid)]

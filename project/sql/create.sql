@@ -15,10 +15,10 @@ create table rooms(
 );
 drop table if exists room_players;
 create table room_players(
-	player_uuid uuid,
+	player_uid uuid,
 	room_uid uuid,
-	PRIMARY KEY (player_uuid, room_uid),
-	FOREIGN KEY (player_uuid) REFERENCES players (player_uid) on delete cascade,
+	PRIMARY KEY (player_uid, room_uid),
+	FOREIGN KEY (player_uid) REFERENCES players (player_uid) on delete cascade,
 	FOREIGN KEY (room_uid) REFERENCES rooms (room_uid) on delete cascade
 );
 drop table if exists game_templates cascade;
