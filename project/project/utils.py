@@ -37,7 +37,7 @@ def display_options(room_uid, player_uid, selected):
                 return []
             # empty location and cards selected
             else:
-
+                return [{"option": "place", "option_text": "place selected card(s)"}]
                 pass  # place cards revealed or not revealed
         # non empty location selected
         else:
@@ -56,26 +56,25 @@ def display_options(room_uid, player_uid, selected):
             return []
         elif len(selected.get('players')) == 1:
             if len(selected.get('cards')) > 0:
-                return [{"option": "give", "player_uid": selected.get('players')[0].player_uid,
+                return [{"option": "give",
                          "option_text": "give selected card(s) to " + selected.get('players')[0].display_name}]
             # only a player is selected so we can pass them the turn
             else:
-                    return [{"option": "pass", "player_uid": selected.get('players')[0].player_uid,
-                             "option_text": "pass turn to " + selected.get('players')[0].display_name}]
+                return [{"option": "pass", "option_text": "pass turn to " + selected.get('players')[0].display_name}]
         # only cards are selected
         else:
             result = []
             for card in selected.get('cards'):
                 if not card.revealed:
-                    result.append({"option": "reveal", "card_uid": card.card_uid,
-                                   "option_text": "reveal " + card.card_name})
+                    result.append({"option": "reveal", "option_text": "reveal " + card.card_name})
             return result
 
 
 # This is the function handler to be called by api.py to pass all the json data from the axios request from the front end.
 # It is to verify that the necessary data is requried before passing it on to the necessary function.
 def function_handler(room_uid, player_uid, option, selected):
-    pass
+    import pdb
+    pdb.set_trace()
 
 
 def reset_room(room_uid):
