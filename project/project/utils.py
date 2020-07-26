@@ -37,7 +37,7 @@ def display_options(room_uid, player_uid, selected):
                 return []
             # empty location and cards selected
             else:
-                return [{"option": "place", "option_text": "place selected card(s) face up"},
+                return [{"option": "place revealed", "option_text": "place selected card(s) face up"},
                         {"option": "place", "option_text": "place selected card(s) face down"}]
         # non empty location selected
         else:
@@ -72,12 +72,33 @@ def display_options(room_uid, player_uid, selected):
 
 # This is the function handler to be called by api.py to pass all the json data from the axios request from the front end.
 # It is to verify that the necessary data is requried before passing it on to the necessary function.
+#todo location stuff
 def function_handler(room_uid, player_uid, option, selected):
-    #decipher option
-    #execute
-    #log as a action
-    import pdb
-    pdb.set_trace()
+
+    posible_options = ["reveal", "pass", "give", "place revealed", "place"]
+    if option not in posible_options:
+        pass #throw error
+    player = db_handler.get_player(player_uid, room_uid)
+    if option == "reveal":
+        for i in selected.get('cards'):
+            db_handler.reveal_card(room_uid, player_uid, i)
+            card = db_handler.get_card(i)
+            db_handler.log_action(room_uid, player.display_name+" reveals "+ card.card_name)
+    elif option == "pass":
+        db_handler.pass_turn(room_uid, player_uid, selected.get('players')[0])
+        p2 = db_handler.get_player(selected.get('players')[0], room_uid)
+        db_handler.log_action(room_uid, player.display_name+" passes the turn to "+ p2.display_name)
+    elif option == "give":
+        p2 = db_handler.get_player(selected.get('players')[0], room_uid)
+        for i in selected.get('cards'):
+            db_handler.give_card(room_uid, player_uid, selected.get('players'[0]),i)
+            card = db_handler.get_card(i)
+            db_handler.log_action(room_uid, player.display_name+" gave "+ card.card_name + " to "+ p2.display_name)
+    elif option =="place revealed":
+        pass
+    else:
+        pass
+
 
 
 def reset_room(room_uid):

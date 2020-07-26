@@ -276,6 +276,31 @@ def update_card_location(room_uid, card_uid, game_board_location, player_uid):
         curs.execute(query, [player_uid, room_uid, card_uid])
     conn.commit()
 
+
+def reveal_card(room_uid, player_uid, card_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """update cards_in_play set revealed = true where room_uid=%s, player_uid=%s, card_uid=%s"""
+        curs.execute(query,[room_uid, player_uid, card_uid])
+    conn.commit()
+
+
+def pass_turn(room_uid, player_uid, new_player_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """update rooms set active_player=%s where room_uid=%s and active_player=%s"""
+        curs.execute(query, [new_player_uid, room_uid, player_uid])
+    conn.commit()
+
+
+def give_card(room_uid, player_uid, new_player_uid, card_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """update cards_in_play set player_uid=%s where room_uid=%s, player_uid=%s, card_uid=%s"""
+        curs.execute(query, [new_player_uid, room_uid, player_uid, card_uid])
+    conn.commit()
+
+
 # template functions
 
 
@@ -320,3 +345,21 @@ def get_template_decks(template_uid):
                     from game_template_decks where template_uid = %s"""
         curs.execute(query, [template_uid])
         return [DBClassDeck(*i) for i in curs]
+
+
+#play log functions
+
+def get_room_log(room_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """select message from play_log where room_uid=%s order by creation_timestamp limit 20"""
+        curs.execute(query, [room_uid])
+        return [i[0] for i in curs]
+
+
+def log_action(room_uid, message):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """insert into play_log(message_uid, room_uid, message) values(uuid_generate_v4(), %s,%s)"""
+        curs.execute(query, [room_uid, message])
+    conn.commit()
