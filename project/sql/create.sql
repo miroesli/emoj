@@ -1,9 +1,12 @@
+drop table if exists auth_user cascade;
 drop table if exists players cascade;
 create table players(
 	username VARCHAR(64)  not null,
   	passcode VARCHAR(64) not null,
   	display_name VARCHAR(64) not null,
-  	player_uid uuid PRIMARY KEY
+  	player_uid uuid PRIMARY KEY,
+	login_id int,
+	FOREIGN KEY (login_id) REFERENCES auth_user(id) on delete restrict
 );
 drop table if exists rooms cascade;
 create table rooms(

@@ -3,10 +3,15 @@
 \set OlegUid 36e17922-cc52-11ea-b508-784f437b7506
 \set JuanUid 36e25108-cc52-11ea-b508-784f437b7506
 
-insert into players(username, passcode, display_name, player_uid) values('Emily','ylimy','Emily', :'EmilyUid');
-insert into players(username, passcode, display_name, player_uid) values('Misha','ahsim','Misha', :'MishaUid');
-insert into players(username, passcode, display_name, player_uid) values('Oleg','gelo','Oleg', :'OlegUid');
-insert into players(username, passcode, display_name, player_uid) values('Juan','nauj','Juan', :'JuanUid');
+insert into players(username, passcode, display_name, player_uid, login_id) values('Emily','ylimy','Emily',:'EmilyUid', 1);
+insert into players(username, passcode, display_name, player_uid, login_id) values('Misha','ahsim','Misha', :'MishaUid',2 );
+insert into players(username, passcode, display_name, player_uid, login_id) values('Oleg','gelo','Oleg', :'OlegUid',3);
+insert into players(username, passcode, display_name, player_uid, login_id) values('Juan','nauj','Juan', :'JuanUid',4);
+
+insert into auth_user(username, password, first_name, last_name, email, is_staff, is_active, date_joined, is_superuser, id) values('Emily', 'ylimy', '', '', '', 't', 't', '2020-07-24 01:36:44.606188+00', 't', 1);
+insert into auth_user(username, password, first_name, last_name, email, is_staff, is_active, date_joined, is_superuser, id) values('Misha', 'ahsim', '', '', '', 't', 't', '2020-07-24 01:36:44.606188+00','t', 2);
+insert into auth_user(username, password, first_name, last_name, email, is_staff, is_active, date_joined, is_superuser, id) values('Oleg', 'gelo', '', '', '', 't', 't', '2020-07-24 01:36:44.606188+00','t', 3);
+insert into auth_user(username, password, first_name, last_name, email, is_staff, is_active, date_joined, is_superuser, id) values('Juan', 'nauj', '', '', '', 't', 't', '2020-07-24 01:36:44.606188+00','t', 4);
 
 \set TemplateUid 36e3531e-cc52-11ea-b508-784f437b7506
 

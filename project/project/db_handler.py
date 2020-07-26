@@ -74,6 +74,7 @@ class DBClassRoom(NiceObject):
 
 # player functions
 
+
 def get_players():
     conn = get_conn()
     with conn.cursor() as curs:
@@ -166,6 +167,7 @@ def get_room(room_uid):
         curs.execute(query, [room_uid])
         for i in curs:
             return DBClassRoom(*i)
+
 
 def clear_cards_in_play(room_uid):
     conn = get_conn()
