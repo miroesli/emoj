@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from project import db_handler, utils
 from django.contrib.auth.models import Permission, User
 
@@ -11,7 +11,7 @@ def load_play_info(room_uid):
 def render_play(request, room_uid):
     room = db_handler.get_room(room_uid)
     if not room:
-        pass  # add error handling
+        return redirect('/')
     else:
         utils.reset_room(room_uid)
         # replace with get room players when data is ready
@@ -21,11 +21,15 @@ def render_play(request, room_uid):
 
         # Get cookie
         print(request.COOKIES)
-
+        player_index = None
         for index, player in enumerate(db_room_players):
             if str(player.username) == str(request.user):
                 player_index = index
                 break
+
+        if player_index is None:
+            return redirect('/')
+
         print("player", db_room_players[player_index].username)
         player = db_room_players[player_index]  # base this from session info
         # this will also have to change with above excluding the current player

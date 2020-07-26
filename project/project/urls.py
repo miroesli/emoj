@@ -27,7 +27,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('home/', home.render_home, name='home'),
-    re_path(
-        r'^play/(?P<room_uid>[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12})', play.render_play, name='play'),
+    re_path(r'^play/(?P<room_uid>[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12})', play.render_play, name='play'),
+    path('play/',play.render_play),
     path('design/', design.render_design),
 ]
