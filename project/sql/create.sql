@@ -87,9 +87,9 @@ create table cards_in_play(
 );
 drop table if exists play_log;
 create table play_log(
-    message uuid PRIMARY KEY,
+    message_uid uuid PRIMARY KEY,
     room_uid uuid,
     message varchar(255),
-    creation_timestamp timestamp,
+    creation_timestamp timestamp default now(),
     FOREIGN KEY (room_uid) REFERENCES rooms (room_uid) on delete  cascade
 );
