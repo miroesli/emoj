@@ -22,4 +22,4 @@ def option(request):
         room_uid = request.GET.get('room_uid')
         player_uid = request.GET.get('player_uid')
         selected = json.loads(request.GET.get('selected'))
-        return json.dumps(utils.display_options(room_uid, player_uid, selected))
+        return HttpResponse(json.dumps(utils.display_options(room_uid, player_uid, selected)))
