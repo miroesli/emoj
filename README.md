@@ -72,10 +72,8 @@ Use `deactivate` to stop exit the environment
 
 ```bash
 sudo -u postgres psql -f project/sql/init.sql
-sudo -u postgres psql -f project/sql/create.sql
-sudo -u postgres psql -f project/sql/test_data.sql
-# or
 psql -U toggleme -d project -f project/sql/create.sql
+psql -U toggleme -d project -f project/sql/test_data.sql
 ```
 
 ### Step 6: Run the server
