@@ -288,7 +288,7 @@ def reveal_card(room_uid, player_uid, card_uid):
 def pass_turn(room_uid, player_uid, new_player_uid):
     conn = get_conn()
     with conn.cursor() as curs:
-        query = """update rooms set active_player=%s where room_uid=%s and active_player=%s"""
+        query = """update rooms set active_player_uid=%s where room_uid=%s and active_player_uid=%s or active_player_uid is null"""
         curs.execute(query, [new_player_uid, room_uid, player_uid])
     conn.commit()
 
