@@ -9,7 +9,7 @@ import random
 def display_options(room_uid, player_uid, selected):
     # enrich selected with player info
     for i in range(len(selected.get('players'))):
-        player = db_handler.get_player(room_uid, selected.get('players')[i])
+        player = db_handler.get_player(selected.get('players')[i], room_uid)
         if player:
             selected.get('players')[i] = player
         else:
@@ -17,7 +17,7 @@ def display_options(room_uid, player_uid, selected):
 
     # enrich selected with card info
     for i in range(len(selected.get('cards'))):
-        card = db_handler.get_card(selected.get('cards')[i])
+        card = db_handler.get_room_card(selected.get('cards')[i], room_uid)
         if card:
             selected.get('cards')[i] = card
         else:
@@ -28,8 +28,7 @@ def display_options(room_uid, player_uid, selected):
         return []
     elif len(selected.get('locations')) == 1:
         # gets cards at location
-        location_cards = db_handler.get_location_cards(
-            room_uid, selected.get('locations')[0])
+        location_cards = db_handler.get_location_cards(room_uid, selected.get('locations')[0][0], selected.get('locations')[0][1])
         # if an empty location selected
         if len(location_cards) == 0:
             # if the only thing selected is an empty location then we have no options
@@ -38,7 +37,7 @@ def display_options(room_uid, player_uid, selected):
                 return []
             # empty location and cards selected
             else:
-
+                return [{"option": "place", "option_text": "place selected card(s)"}]
                 pass  # place cards revealed or not revealed
         # non empty location selected
         else:
@@ -53,31 +52,29 @@ def display_options(room_uid, player_uid, selected):
     # zero locations
     else:
         # player selected
-        if len(selected.get('players')) > 0:
+        if len(selected.get('players')) > 1:
+            return []
+        elif len(selected.get('players')) == 1:
             if len(selected.get('cards')) > 0:
-                # at least one player, card and location selected
-                if len(selected.get('locations')) > 0:
-                    return []
-                else:
-                    if len(selected.get('cards')) == 1 and len(selected.get('players')) == 1:
-                        result = []
-                        return ["give all to " + selected.get('players')[0].display_name]
+                return [{"option": "give",
+                         "option_text": "give selected card(s) to " + selected.get('players')[0].display_name}]
+            # only a player is selected so we can pass them the turn
+            else:
+                return [{"option": "pass", "option_text": "pass turn to " + selected.get('players')[0].display_name}]
         # only cards are selected
         else:
             result = []
             for card in selected.get('cards'):
                 if not card.revealed:
-                    result.append({"option": "reveal", "card_uid": card.card_uid,
-                                   "option_text": "reveal " + card.card_name})
+                    result.append({"option": "reveal", "option_text": "reveal " + card.card_name})
             return result
-
-    return response
 
 
 # This is the function handler to be called by api.py to pass all the json data from the axios request from the front end.
 # It is to verify that the necessary data is requried before passing it on to the necessary function.
 def function_handler(room_uid, player_uid, option, selected):
-    pass
+    import pdb
+    pdb.set_trace()
 
 
 def reset_room(room_uid):

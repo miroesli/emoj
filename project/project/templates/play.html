@@ -104,7 +104,7 @@
         //preload cards into js with django. we can make this dynamic later with vue
         let play_area = {"players":{{players | safe}},"player":{{player | safe}},"room":{{room | safe}}}
         let selected = {"players":[], "locations":[], "cards":[]};
-        let options =[];
+        let options =   [];
         let play_area_vue;
         window.onload = function () {
             //vue setup. delimeters set to square brackets because django uses curly
@@ -114,7 +114,7 @@
                 data: {
                     play_area:play_area,
                     selected:selected,
-                    options:options
+                    options:options,
                 },
                 computed:{
                   middle_players:function(){
@@ -162,13 +162,30 @@
                               selected:selected
                             },
                         }).then((response) => {
-                            options = response.options;
-
+                            //hack for vue to rerender
+                            options.splice(0,options.length);
+                            options.push(... response.data);
                         }).catch((response) => {
-                            console.log(response);
+                            debugger;
+                            console.log(response.status);
+                        });
+                    },
+                    take_action:function(option){
+                        axios.defaults.xsrfCookieName = 'csrftoken'
+                        axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+                        axios.post("/api/options",{
+                              player_uid:play_area.player.player_uid,
+                              room_uid:play_area.room.room_uid,
+                              selected:selected,
+                              option:option
+
+                        }).then((response) => {
+                           debugger;
+                        }).catch((response) => {
+                            debugger;
+                            console.log(response.status);
                         });
                     }
-
                 }
             });
         }
@@ -229,18 +246,23 @@
                     <div class="card-header">Hand</div>
                     <div class="card-body">
                         <template v-for="card in play_area.player.hand">
-                    <div v-if="selected.cards.includes(card.card_uid)" :class="'playing-card selected ' + card.media_class" @click="toggle_card_selection(card.card_uid)">
+                            <div v-if="selected.cards.includes(card.card_uid)" :class="'playing-card selected ' + card.media_class" @click="toggle_card_selection(card.card_uid)">
 
-                    </div>
-                    <div v-else :class="'playing-card '+card.media_class" @click="toggle_card_selection(card.card_uid)">
+                            </div>
+                            <div v-else :class="'playing-card '+card.media_class" @click="toggle_card_selection(card.card_uid)">
 
-                    </div>
-                </template>
+                            </div>
+                        </template>
                     </div>
                 </div>
             </div>
             <div id="options-area" class="card text-white bg-success " style="min-width: 80px">
                 <div class="card-header">Options</div>
+                <div class="card-body">
+                    <template v-for="option in options">
+                        <div @click="take_action(option)" style="border: 5px solid white;padding 5px ">[[option.option_text]]</div>
+                    </template>
+                </div>
             </div>
         </div>
     </div>

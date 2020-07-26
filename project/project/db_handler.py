@@ -91,11 +91,19 @@ def get_player(player_uid, room_uid):
             return DBClassPlayer(*i)
 
 
+def get_player_by_username(username):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """select username, display_name, player_uid::varchar from players where username=%s"""
+        curs.execute(query, [username])
+        for i in curs:
+            return DBClassPlayer(*i)
+
 
 def get_players():
     conn = get_conn()
     with conn.cursor() as curs:
-        query = """select username, display_name, player_uid::varchar from players"""
+        query = """select username, display_name, player_uid::varchar from players order by player_uid"""
         curs.execute(query)
         # *i just places all things into the function individually in order
         return [DBClassPlayer(*i) for i in curs]
@@ -121,7 +129,8 @@ def get_card(card_uid):
                     from cards where card_uid =%s order by creation_timestamp """
         curs.execute(query, [card_uid])
         # *i just places all things into the function individually in order
-        return [DBClassCard(*i) for i in curs]
+        for i in curs:
+            return DBClassCard(*i)
 
 
 def get_cards():
@@ -143,6 +152,19 @@ def get_player_cards(player_uid, room_uid):
         curs.execute(query, [room_uid, player_uid])
         # *i just places all things into the function individually in order
         return [DBClassCard(*i) for i in curs]
+
+
+def get_room_card(card_uid, room_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """ select card_name, c.card_uid::varchar, media_uuid::varchar, media_class, creation_timestamp,p.revealed from
+                        cards c join cards_in_play p on c.card_uid = p.card_uid and p.room_uid = %s
+                        where c.card_uid =%s
+                        order by creation_timestamp"""
+        curs.execute(query, [room_uid, card_uid])
+        # *i just places all things into the function individually in order
+        for i in curs:
+            return DBClassCard(*i)
 
 
 def get_player_card_revealed(player_uid, room_uid):
