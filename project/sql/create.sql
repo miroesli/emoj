@@ -1,4 +1,3 @@
-drop table if exists auth_user cascade;
 drop table if exists players cascade;
 create table players(
 	username VARCHAR(64)  not null,
