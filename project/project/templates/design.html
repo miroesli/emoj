@@ -2,7 +2,15 @@
 <html lang="en">
 
 <head>
-    {% block title %}<title>Design</title>{% endblock %}
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Jekyll v4.0.1">
+    <title>Emoj * Design</title>
+    <link href="../static/css/bootstrap.css" rel="stylesheet">
+
     <!-- development version, includes helpful console warnings -->
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <!-- axios is a communication platform for vue to communicate to backend-->
@@ -13,6 +21,12 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/global_css_classes.css' %}">
 
     <style>
+        #container{
+            height: calc(100vh - 80px);
+            width: calc(100% - 20px);
+            margin: 0 10px;
+        }
+
         #all-cards-container {
             display: grid;
             grid-template-columns: repeat(13, 1fr);
@@ -25,6 +39,24 @@
             min-height: 97px;
             border-radius: 3px;
         }
+
+        .blog-header {
+            line-height: 1;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .blog-header-logo {
+            font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+            font-size: 2.25rem;
+        }
+
+        .blog-header-logo:hover {
+            text-decoration: none;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+        }
     </style>
 
 </head>
@@ -34,6 +66,8 @@
         //preload cards into js with django. we can make this dynamic later with vue
         let card_list = {{cards | safe}};
         let deck_cards = [];
+        let selectedPositions = ["00"];
+        console.log(selectedPositions);
         window.onload = function () {
             //vue setup. delimeters set to square brackets because django uses curly
 
@@ -42,7 +76,8 @@
                 el: '#design-container',
                 data: {
                     card_list: card_list,
-                    deck_cards: deck_cards
+                    deck_cards: deck_cards,
+                    selectedPositions: selectedPositions
                 },
                 methods: {
                     add_card: function (card) {
@@ -76,6 +111,12 @@
                             card.quantity += 1;
                             Vue.set(this.deck_cards, i, card);
                         }
+                    },select_card: function (pos) {
+                        if(selectedPositions.includes(pos)){
+                            selectedPositions.splice(selectedPositions.indexOf(pos), 1);
+                         }else{
+                            selectedPositions.push(pos);
+                         }
                     }
                 }
             });
@@ -104,29 +145,133 @@
             min-height: 97px;
             color: red;
         }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+        }
+        .grid-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+
+        .card-position {
+            width: 71px;
+            height: 97px;
+            cursor: pointer;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            {#border-radius: 4px;#}
+        }
+
+        .card-position.selected {
+            border: 1px solid var(--gray);
+            border-radius: 3px;
+            background: #e9ecef;
+            {#border: 1px solid;#}
+            {#background: var(--info);#}
+        }
+        .card-position.selected .plus {
+            display: none;
+        }
+
+        .card-position.current-deck {
+            border: 1px solid;
+            border-radius: 3px;
+            background: var(--red);
+        }
+
+
     </style>
 
     {% block sidebar %}
     <!-- insert default navigation text for every page -->{% endblock %}
     {% block content %}
-    <h1>design</h1>
-    <div id="design-container">
-        <div id="deck_slots">
 
-        </div>
-        <div id="deck-cards-container">
-            <div v-for="card in deck_cards" :class="'selected-card ' + card.media_class" v-on:click="remove_card(card)">
-                [[card.quantity]]</div>
-        </div>
-        <br>
-        <div id="all-cards-container">
-            <div style="grid-column: 1 / 14; display: flex;justify-content: space-around" class="displayed-card">
-                <div class="blank-card" v-on:click="add_all()">add one of each card</div>
-                <div class="blank-card" v-on:click="increment_all()">add one of each added card</div>
+
+
+
+
+{#    <body class="bg-light">#}
+        <div id="design-container">
+    <div id="" class="container">
+        <header class="blog-header py-3">
+            <div class="row flex-nowrap justify-content-between align-items-center">
+                <div class="col-4 pt-1">
+                    <a class="text-muted" href="/home">Home</a>
+                </div>
+                <div class="col-4 text-center">
+                    <a class="blog-header-logo text-dark" href="#">Design</a>
+                </div>
+                <div class="col-4 d-flex justify-content-end align-items-center"></div>
             </div>
-            <div v-for="card in card_list" :class="'displayed-card ' + card.media_class" v-on:click="add_card(card)">
-            </div>
+        </header>
+
+        <div class="jumbotron" style="margin-top: 15px;">
+            <h1 class="display-4">Host a game!</h1>
+            <p class="lead">Design your game play below.</p>
+            <hr class="my-4">
+            <form>
+                <div class="form-group row">
+                    <label for="roomName" class="col-sm-2 col-form-label">Room Name</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="roomName" placeholder="Room Name">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="inputPassword3" class="col-sm-2 col-form-label">Design Board
+                        <div class="text-muted">Select positions to add to to the board.</div></label>
+                    <div class="col-sm-10">
+                        <div class="card mb-3" style="width: 100%; border: 1px solid #ced4da;">
+                            <div class="card-body grid-container" >
+                                <template v-for="x in 4" >
+                                    <div v-for="y in 6"  class="grid-item" :data-position_x="[[x-1]]" :data-position_y="[[y-1]]" >
+                                        <template v-if="x===1 && y===1">
+                                            <div class="card-position current-deck" style="overflow: hidden">
+                                                <img src="../static/media/png-cardback.png" style=" height: 100px">
+                                            </div>
+                                        </template>
+                                        <template v-else >
+                                            <div class="card-position"
+                                                 v-bind:class="{ selected: selectedPositions.includes((x-1).toString()+(y-1).toString()) }"
+                                                 @click="select_card((x-1).toString()+(y-1).toString())">
+                                            <h1 class="plus">+</h1>
+                                            </div>
+                                        </template>
+
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group " style="text-align: center">
+                    <button type="submit" class="btn btn-primary btn-lg" style="margin: 20px">Open Room</button>
+                </div>
+            </form>
         </div>
+    </div>
+
+
+
+{#        <div id="deck_slots"></div>#}
+{#        <div id="deck-cards-container">#}
+{#            <div v-for="card in deck_cards" :class="'selected-card ' + card.media_class" v-on:click="remove_card(card)">#}
+{#                [[card.quantity]]</div>#}
+{#        </div>#}
+{#        <br>#}
+{#        <div id="all-cards-container">#}
+{#            <div style="grid-column: 1 / 14; display: flex;justify-content: space-around" class="displayed-card">#}
+{#                <div class="blank-card" v-on:click="add_all()">add one of each card</div>#}
+{#                <div class="blank-card" v-on:click="increment_all()">add one of each added card</div>#}
+{#            </div>#}
+{#            <div v-for="card in card_list" :class="'displayed-card ' + card.media_class" v-on:click="add_card(card)">#}
+{#            </div>#}
+{#        </div>#}
     </div>
     {% endblock %}
 </body>
