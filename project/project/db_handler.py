@@ -321,7 +321,7 @@ def get_all_templates():
         return [DBClassTemplate(*i) for i in curs]
 
 
-def create_new_room(room_name, room_passcode, room_uid, template_uid, active_player_uid):
+def insert_room(room_name, room_passcode, room_uid, template_uid, active_player_uid):
     conn = get_conn()
     with conn.cursor() as curs:
         query = """insert into rooms (room_name, room_passcode, room_uid, template_uid, active_player_uid)
@@ -330,10 +330,10 @@ def create_new_room(room_name, room_passcode, room_uid, template_uid, active_pla
         conn.commit()
 
 
-def create_new_template(template_name, template_uid):
+def insert_template(template_name, template_uid):
     conn = get_conn()
     with conn.cursor() as curs:
-        query = """insert into templates (template_name, template_name) values(%s,%s)"""
+        query = """insert into game_templates (template_name, template_uid) values(%s,%s)"""
         curs.execute(query, [template_name, template_uid])
         conn.commit()
 
@@ -341,9 +341,9 @@ def create_new_template(template_name, template_uid):
 def insert_template_deck(template_uid, deck_uid, game_board_location_x, game_board_location_y):
     conn = get_conn()
     with conn.cursor() as curs:
-        query = """insert into template_decks(deck_uid, template_uid, game_board_location_x, game_board_location_y)
+        query = """insert into game_template_decks(deck_uid, template_uid, game_board_location_x, game_board_location_y)
                    values (%s,%s,%s,%s) """
-        curs.execute(query, [template_uid, deck_uid, game_board_location_x, game_board_location_y])
+        curs.execute(query, [deck_uid, template_uid, game_board_location_x, game_board_location_y])
         conn.commit()
 
 
@@ -354,6 +354,14 @@ def get_template_decks(template_uid):
                     from game_template_decks where template_uid = %s"""
         curs.execute(query, [template_uid])
         return [DBClassDeck(*i) for i in curs]
+
+def get_first_deck():
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """ select * from decks limit 1;"""
+        curs.execute(query)
+        for i in curs:
+            return DBClassDeck(*i)
 
 
 #play log functions

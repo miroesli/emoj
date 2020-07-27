@@ -1,7 +1,8 @@
 from django.http import HttpResponse
-from project import utils
+from project import utils, db_handler
 import json
 import ast
+import uuid
 
 
 def id(request, id):
@@ -24,3 +25,29 @@ def option(request):
         player_uid = request.GET.get('player_uid')
         selected = json.loads(request.GET.get('selected'))
         return HttpResponse(json.dumps(utils.display_options(room_uid, player_uid, selected)))
+
+
+def open_room(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        room_name = data.get('room_name')
+        positions = data.get('positions')
+        template_name = data.get('template_name')
+        template_uid = data.get('template_uid')
+
+        if template_uid in [None, ""]:
+            template_uid = uuid.uuid4()
+            db_handler.insert_template(template_name, template_uid)
+
+            first_deck_uid = db_handler.get_first_deck().deck_uid
+            db_handler.insert_template_deck(template_uid, first_deck_uid, 0, 0)
+
+            for p in positions:
+                x = int(p[0])
+                y = int(p[1])
+                db_handler.insert_template_deck(template_uid, None, x, y)
+
+        room_uid = uuid.uuid4()
+        db_handler.insert_room(room_name, None, room_uid, template_uid, None)
+
+        return HttpResponse(json.dumps({'room_uid': str(room_uid)}))

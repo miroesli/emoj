@@ -16,13 +16,14 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <!-- axios is a communication platform for vue to communicate to backend-->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-        {% load static %}
-        <link rel="stylesheet" type="text/css" href="{% static 'css/global_css_classes.css' %}">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/global_css_classes.css' %}">
 
     <style>
         #container{
             height: calc(100vh - 80px);
             width: calc(100% - 20px);
+            margin: 0 10px;
         }
         #play-area {
             display: flex;
@@ -195,7 +196,7 @@
 {% block content %}
 
     <div id="container">
-        <header class="blog-header py-3">
+        <header class="blog-header py-3 container">
             <div class="row flex-nowrap justify-content-between align-items-center">
                 <div class="col-4 pt-1">
                     <a class="text-muted" href="/home">Home</a>
