@@ -28,11 +28,8 @@ def option(request):
 
 
 def open_room(request):
-    print('open room')
-    print(request.body)
     if request.method == 'POST':
         data = json.loads(request.body)
-        print(data)
         room_name = data.get('room_name')
         positions = data.get('positions')
         template_name = data.get('template_name')
@@ -40,10 +37,9 @@ def open_room(request):
 
         if template_uid in [None, ""]:
             template_uid = uuid.uuid4()
-            db_handler.create_new_template( template_name, template_uid)
+            db_handler.insert_template(template_name, template_uid)
 
             first_deck_uid = db_handler.get_first_deck().deck_uid
-            print(first_deck_uid)
             db_handler.insert_template_deck(template_uid, first_deck_uid, 0, 0)
 
             for p in positions:
@@ -51,10 +47,7 @@ def open_room(request):
                 y = int(p[1])
                 db_handler.insert_template_deck(template_uid, None, x, y)
 
-    #     TODO: create a new template uid
-    #  create template, load deck
-    # link template to room
-    # first deck from decks for position 00
-    # other decks are null
+        room_uid = uuid.uuid4()
+        db_handler.insert_room(room_name, None, room_uid, template_uid, None)
 
-    return HttpResponse(json.dumps('test'))
+        return HttpResponse(json.dumps({'room_uid': str(room_uid)}))
