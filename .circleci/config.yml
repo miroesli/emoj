@@ -5,24 +5,47 @@ orbs:
   slack: circleci/slack@3.4.2
 
 jobs:
-  build-and-test:
-    executor: python/default
-    # docker:
-    #   - image: circleci/python:3.8
-    # working_directory: ./project
+  build:
+    # executor: python/default
+    docker:
+      - image: circleci/python:3.8
     steps:
       - checkout
-      - python/load-cache
-      - python/install-deps
-      - python/save-cache
-      - run:
-          # update once moved to root
-          command: ./project/manage.py test --pattern="test_*.py"
-          name: Test
-      - slack/status:
-          webhook: "${SLACK_WEBHOOK}"
+      # - python/load-cache
+      # - python/install-deps
+      # - python/save-cache
+      # - restore_cache:
+      #     key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
+      # - run:
+      #     command: |
+      #       python3 -m venv venv
+      #       . venv/bin/activate
+      #       ls -la
+      #       pip install -r requirements.txt
+      # - save_cache:
+      #     key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
+      #     paths:
+      #       - "venv"
+  test:
+    # executor: python/default
+    docker:
+      - image: circleci/python:3.8
+    steps:
+      - checkout
+      # - run:
+      #     name: Running tests
+      #     # update once moved to root
+      #     command: |
+      #       cd project
+      #       ./manage.py test --pattern="test_*.py"
+      # - store_artifacts:
+      #     path: test-reports/
+      #     destination: python_app
+      # - slack/status:
+      #     webhook: "${SLACK_WEBHOOK}"
 
 workflows:
-  main:
+  build_and_test:
     jobs:
-      - build-and-test
+      - build
+      - test
