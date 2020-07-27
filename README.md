@@ -111,7 +111,7 @@ Build and run server. `-d` puts it into the background.
 <!-- sudo docker build --tag emoj:1.0 . -->
 
 ```bash
-docker-compose up [-d] --build
+docker-compose up [-d] --build --remove-orphans
 ```
 
 Migrating data in another terminal
@@ -119,6 +119,18 @@ Migrating data in another terminal
 ```bash
 sudo docker-compose exec web python project/generate_cards.py
 sudo docker-compose exec web python manage.py migrate --no-input
+```
+
+To connect to docker database
+
+```bash
+docker-compose exec db psql -U postgres -d task_management
+```
+
+To remove mapping
+
+```bash
+docker-compose rm db
 ```
 
 ## Testing
