@@ -13,7 +13,8 @@ WORKDIR /code
 
 # install dependencies
 RUN pip install --upgrade pip
-COPY requirements.txt /code/
+# COPY requirements.txt /code/
+ADD requirements.txt /code/
 RUN pip install -r requirements.txt
 
 # CMD sudo -u postgres psql -f sql/init.sql
@@ -23,7 +24,5 @@ RUN pip install -r requirements.txt
 
 COPY . /code/
 
-# RUN python manage.py migrate --no-input
 # CMD [ "python3", "manage.py", "migrate", "--no-input" ]
 # CMD [ "psql", "manage.py", "migrate", "--no-input" ]
-# RUN ls
