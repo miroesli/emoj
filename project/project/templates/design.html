@@ -15,6 +15,9 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <!-- axios is a communication platform for vue to communicate to backend-->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- use the latest vue-select release -->
+    <script src="https://unpkg.com/vue-select@latest"></script>
+    <link rel="stylesheet" href="https://unpkg.com/vue-select@latest/dist/vue-select.css">
 
     {% load static %}
 
@@ -65,9 +68,17 @@
     <script>
         //preload cards into js with django. we can make this dynamic later with vue
         let card_list = {{cards | safe}};
+        let templates = {{ templates | safe }};
+        {#templates.push({'template_name': "Create New Template", 'template_uid': null});#}
+        let selectedTemplate;
         let deck_cards = [];
         let selectedPositions = ["00"];
+        let name = "";
+        let templateName = "";
         console.log(selectedPositions);
+        Vue.component('v-select', VueSelect.VueSelect);
+
+
         window.onload = function () {
             //vue setup. delimeters set to square brackets because django uses curly
 
@@ -76,8 +87,12 @@
                 el: '#design-container',
                 data: {
                     card_list: card_list,
+                    templates,
+                    selectedTemplate: null,
                     deck_cards: deck_cards,
-                    selectedPositions: selectedPositions
+                    selectedPositions: selectedPositions,
+                    name,
+                    templateName
                 },
                 methods: {
                     add_card: function (card) {
@@ -111,15 +126,52 @@
                             card.quantity += 1;
                             Vue.set(this.deck_cards, i, card);
                         }
-                    },select_card: function (pos) {
+                    },
+                    select_card: function (pos) {
                         if(selectedPositions.includes(pos)){
                             selectedPositions.splice(selectedPositions.indexOf(pos), 1);
                          }else{
                             selectedPositions.push(pos);
                          }
+                    },
+                    open_room: function (name, template_uid, templateName) {
+                        console.log(name)
+                        console.log(template_uid)
+                        console.log(templateName)
+                        let url;
+                        axios.defaults.xsrfCookieName = 'csrftoken'
+                        axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+                        axios.post("/api/open_room",{
+                                room_name: name,
+                                template_uid: template_uid,
+                                template_name: templateName,
+                                positions:  selectedPositions
+                        }).then((response) => {
+                            console.log(response);
+                        }).catch((response)=>{
+                            console.log(response);
+                        });
+
+                    },
+                    onChange: function () {
+                        console.log("on change");
+                        console.log(this);
                     }
                 }
             });
+            {##}
+            {#Vue.component('v-select', VueSelect.VueSelect)#}
+            {##}
+            {#new Vue({#}
+            {#    el: '#app',#}
+            {#    data: {#}
+            {#        options: [#}
+            {#            'foo',#}
+            {#            'bar',#}
+            {#            'baz'#}
+            {#        ]#}
+            {#    }#}
+            {# })#}
         }
     </script>
     <style>
@@ -184,6 +236,10 @@
             border-radius: 3px;
             background: var(--red);
         }
+        .v-select {
+            background: white;
+            border-radius: 4px;
+        }
 
 
     </style>
@@ -191,9 +247,6 @@
     {% block sidebar %}
     <!-- insert default navigation text for every page -->{% endblock %}
     {% block content %}
-
-
-
 
 
 {#    <body class="bg-light">#}
@@ -219,11 +272,33 @@
                 <div class="form-group row">
                     <label for="roomName" class="col-sm-2 col-form-label">Room Name</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="roomName" placeholder="Room Name">
+                        <input v-model="name" type="text" class="form-control" id="roomName" placeholder="Room Name">
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="inputPassword3" class="col-sm-2 col-form-label">Design Board
+                    <label for="exampleSelect1" class="col-sm-2 col-form-label">Select a template
+                        <div class="text-muted">Or create your own</div></label>
+</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" v-model="selectedTemplate" @change="onChange()">
+                            <option :value=null>Create New Template</option>
+                            <template v-for="t in templates" >
+                                <option :value="t.template_uid">[[t.template_name]]</option>
+                            </template>
+                        </select>
+                    </div>
+                </div>
+                <template v-if="selectedTemplate == null">
+                    <div class="form-group row">
+                        <label for="templateName" class="col-sm-2 col-form-label">Template Name</label>
+                        <div class="col-sm-10">
+                            <input v-model="templateName" type="text" class="form-control" id="templateName" placeholder="Template Name">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row">
+                    <label for="" class="col-sm-2 col-form-label">Design Board
                         <div class="text-muted">Select positions to add to to the board.</div></label>
                     <div class="col-sm-10">
                         <div class="card mb-3" style="width: 100%; border: 1px solid #ced4da;">
@@ -249,8 +324,11 @@
                         </div>
                     </div>
                 </div>
+
+                </template>
+
                 <div class="form-group " style="text-align: center">
-                    <button type="submit" class="btn btn-primary btn-lg" style="margin: 20px">Open Room</button>
+                    <div @click="open_room(name, selectedTemplate, templateName)" class="btn btn-primary btn-lg" style="margin: 20px">Open Room</div>
                 </div>
             </form>
         </div>

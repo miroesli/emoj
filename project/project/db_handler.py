@@ -324,7 +324,7 @@ def create_new_room(room_name, room_passcode, room_uid, template_uid, active_pla
 def create_new_template(template_name, template_uid):
     conn = get_conn()
     with conn.cursor() as curs:
-        query = """insert into templates (template_name, template_name) values(%s,%s)"""
+        query = """insert into game_templates (template_name, template_uid) values(%s,%s)"""
         curs.execute(query, [template_name, template_uid])
         conn.commit()
 
@@ -363,3 +363,4 @@ def log_action(room_uid, message):
         query = """insert into play_log(message_uid, room_uid, message) values(uuid_generate_v4(), %s,%s)"""
         curs.execute(query, [room_uid, message])
     conn.commit()
+
