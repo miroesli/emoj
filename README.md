@@ -130,6 +130,7 @@ docker-compose exec db psql -U postgres -d task_management
 To remove mapping
 
 ```bash
+docker-compose down --volumes
 docker-compose rm db
 ```
 
