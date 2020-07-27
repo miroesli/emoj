@@ -1,5 +1,7 @@
 # Emoj
 
+[![CircleCI](https://circleci.com/gh/miroesli/emoj.svg?style=shield)](https://circleci.com/gh/miroesli/emoj)
+
 Seng 499 project by Emily, Misha, Oleg, and Juan.
 
 ## Requirements
@@ -104,19 +106,19 @@ python manage.py createsuperuser
 
 ### Execution
 
-Build and run server
+Build and run server. `-d` puts it into the background.
 
 <!-- sudo docker build --tag emoj:1.0 . -->
 
 ```bash
-docker-compose up --build
+docker-compose up [-d] --build
 ```
 
-Migrating data
+Migrating data in another terminal
 
 ```bash
 sudo docker-compose exec web python project/generate_cards.py
-sudo docker-compose exec web python manage.py migrate
+sudo docker-compose exec web python manage.py migrate --no-input
 ```
 
 ## Testing
@@ -138,3 +140,7 @@ Alternatively to specify which test files
 ```bash
 python manage.py test --pattern="tests_*.py"
 ```
+
+### Circleci
+
+To test circleci script see the circleci local [installation docs](https://circleci.com/docs/2.0/local-cli/#installation)
