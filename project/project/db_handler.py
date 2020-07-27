@@ -237,10 +237,11 @@ def load_cards_in_play(room_uid):
     conn = get_conn()
     with conn.cursor() as curs:
         query = """insert into cards_in_play(room_uid,game_board_location_x,game_board_location_y,order_index,player_uid,card_uid,revealed) 
-                   select %s, td.game_board_location_x,td.game_board_location_y,0,NULL,dc.card_uid,false from 
-                                rooms r join 
-                                game_template_decks td on r.template_uid = td.template_uid join 
-                                deck_cards dc on td.deck_uid = dc.deck_uid
+                   select room_uid,0,0,0,NULL,dc.card_uid,false from 
+                                rooms r 
+                                join game_templates t on r.room_uid=%s and r.template_uid = t.template_uid 
+                                join game_template_decks td on td.template_uid = t.template_uid and td.deck_uid is not null
+                                join deck_cards dc on td.deck_uid = dc.deck_uid
                                 """
         curs.execute(query, [room_uid])
     conn.commit()
@@ -302,6 +303,14 @@ def give_card(room_uid, player_uid, new_player_uid, card_uid):
 
 
 # template functions
+
+def get_room_template(room_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """select template_name, r.template_uid::varchar from game_templates gt join rooms r on r.template_uid = gt.template_uid where room_uid=%s"""
+        curs.execute(query, [room_uid])
+        for i in curs:
+            return DBClassTemplate(*i)
 
 
 def get_all_templates():
