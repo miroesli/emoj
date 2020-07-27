@@ -20,12 +20,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '=)25b3&1g&i9ko6=(+18c&f%o5dh$b@j&)ug$&-7^26hf77b-f'
-# SECRET_KEY = os.environ.get("SECRET_KEY")
+# SECRET_KEY =
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY", '=)25b3&1g&i9ko6=(+18c&f%o5dh$b@j&)ug$&-7^26hf77b-f')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-# DEBUG = int(os.environ.get("DEBUG", default=0))
+DEBUG = int(os.environ.get("DEBUG", 1))
 
 ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1']
 # ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
@@ -78,22 +78,15 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'project',
-        'USER': 'toggleme',
-        'PASSWORD': 'ss',
-        'HOST': 'localhost',
-        'PORT': '',
+    # docker or local setup
+    "default": {
+        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.postgresql_psycopg2"),
+        "NAME": os.environ.get("SQL_DATABASE", "project"),
+        "USER": os.environ.get("SQL_USER", "toggleme"),
+        "PASSWORD": os.environ.get("SQL_PASSWORD", "ss"),
+        "HOST": os.environ.get("SQL_HOST", "localhost"),
+        "PORT": os.environ.get("SQL_PORT", ""),
     }
-    #     "default": {
-    #     "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
-    #     "NAME": os.environ.get("SQL_DATABASE", os.path.join(BASE_DIR, "db.sqlite3")),
-    #     "USER": os.environ.get("SQL_USER", "user"),
-    #     "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
-    #     "HOST": os.environ.get("SQL_HOST", "localhost"),
-    #     "PORT": os.environ.get("SQL_PORT", "5432"),
-    # }
 }
 
 
