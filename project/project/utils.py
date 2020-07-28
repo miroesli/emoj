@@ -151,8 +151,12 @@ def load_play_info(room_uid, player_uid):
 
     template = db_handler.get_room_template(room_uid)
     template.decks = db_handler.get_template_decks(template.template_uid)
-    for deck in template.decks:
-        deck.game_board_location = str(deck.game_board_location.x) + str(deck.game_board_location.y)
+
+    positions = [{'x': i, 'y': j} for i in range(4) for j in range(6)]
+    for i in template.decks:
+        for p in positions:
+            if p['x'] == i.game_board_location.x and p['y'] == i.game_board_location.y:
+                p.update(i.to_dict())
 
     return {"player": player.to_dict(), "players": [i.to_dict() for i in room_players], "room": room,
-            "template": template.to_dict()}
+            "template": template.to_dict(), "positions": positions}
