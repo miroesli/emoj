@@ -165,5 +165,7 @@ def load_play_info(room_uid, player_uid):
             if p['x'] == i.game_board_location.x and p['y'] == i.game_board_location.y:
                 p.update(i.to_dict())
 
+    room_log = db_handler.get_room_log(room_uid)
+
     return {"player": player.to_dict(), "players": [i.to_dict() for i in room_players], "room": room.to_dict(),
-            "template": template.to_dict(), "positions": positions}
+            "template": template.to_dict(), "positions": positions, "room_log": room_log}
