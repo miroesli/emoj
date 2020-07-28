@@ -147,7 +147,10 @@
                                 template_name: templateName,
                                 positions:  selectedPositions
                         }).then((response) => {
-                            console.log(response);
+                            console.log(response.data.room_uid);
+                            window.location.href = "/play/" + response.data.room_uid;
+
+
                         }).catch((response)=>{
                             console.log(response);
                         });

@@ -50,4 +50,13 @@ def open_room(request):
         room_uid = uuid.uuid4()
         db_handler.insert_room(room_name, None, room_uid, template_uid, None)
 
+        room_players = db_handler.get_players()
+        player_uid = None
+        for player in room_players:
+            if str(player.username) == str(request.user):
+                player_uid = player.player_uid
+                break
+
+        db_handler.insert_room_player(room_uid, player_uid)
+
         return HttpResponse(json.dumps({'room_uid': str(room_uid)}))

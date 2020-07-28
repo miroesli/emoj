@@ -50,7 +50,7 @@ class DBClassTemplate(NiceObject):
 
 
 class DBClassDeck(NiceObject):
-    def __init__(self, deck_name, deck_uid, template_uid,game_board_location_x=None, game_board_location_y=None):
+    def __init__(self, deck_name, deck_uid, template_uid, game_board_location_x, game_board_location_y):
         self.deck_name = deck_name
         self.game_board_location = DBClassPOINT(game_board_location_x, game_board_location_y)
         self.deck_uid = deck_uid
@@ -116,13 +116,21 @@ def get_players():
         return [DBClassPlayer(*i) for i in curs]
 
 
+def insert_room_player(room_uid, player_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """insert into room_players(room_uid, player_uid) values(%s, %s)"""
+        curs.execute(query, [room_uid, player_uid])
+    conn.commit()
+
+
 def get_room_players(room_uid):
     conn = get_conn()
     with conn.cursor() as curs:
-        query = """select username, display_name, player_uid::varchar from 
+        query = """select username, display_name, p.player_uid::varchar from 
                    players p join room_players r on p.player_uid = r.player_uid
                    where room_uid = %s"""
-        curs.execute(query[room_uid])
+        curs.execute(query, [room_uid])
         # *i just places all things into the function individually in order
         return [DBClassPlayer(*i) for i in curs]
 
