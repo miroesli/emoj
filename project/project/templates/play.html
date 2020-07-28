@@ -147,6 +147,12 @@
 </head>
 <body>
 <script>
+
+        //preload cards into js with django. we can make this dynamic later with vue
+        let play_area = {"players":{{players | safe}},"player":{{player | safe}},"room":{{room | safe}}, "template": {{ template | safe }}}
+        let selected = {"players":[], "locations":[], "cards":[]};
+        let options =   [];
+        let play_area_vue;
         function load_play(){
             axios.defaults.xsrfCookieName = 'csrftoken'
             axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
@@ -156,21 +162,17 @@
                   room_uid:play_area.room.room_uid,
                 },
             }).then((response) => {
-                //hack for vue to rerender
                 debugger;
+                play_area = response.data;
+                play_area_vue.$forceUpdate();
             }).catch((response) => {
                 debugger;
                 console.log(response.status);
             });
         }
-        //preload cards into js with django. we can make this dynamic later with vue
-        let play_area = {"players":{{players | safe}},"player":{{player | safe}},"room":{{room | safe}}, "template": {{ template | safe }}}
-        let selected = {"players":[], "locations":[], "cards":[]};
-        let options =   [];
-        let play_area_vue;
+
         window.onload = function () {
-            //let intervalID = window.setInterval(load_play, 1500);
-            //load_play();
+            //let intervalID = window.setInterval(load_play, 500);
             //vue setup. delimeters set to square brackets because django uses curly
             play_area_vue = new Vue({
                 delimiters: ['[[', ']]'],
@@ -244,7 +246,20 @@
                               option:option.option
 
                         }).then((response) => {
-                           debugger;
+                            for (var key in play_area) {
+                                if(Array.isArray(play_area[key])){
+                                    play_area[key].splice(0,options.length);
+                                    play_area[key].push(... response.data[key]);
+                                }
+                                else{
+                                    play_area[key]=response.data[key];
+                                }
+
+                            }
+                            play_area.
+
+                            play_area = response.data;
+                            play_area_vue.$forceUpdate();
                         }).catch((response) => {
                             debugger;
                             console.log(response.status);
@@ -252,6 +267,9 @@
                     }
                 }
             });
+
+
+
         }
 </script>
 {#{% block sidebar %}<!-- insert default navigation text for every page -->{% endblock %}#}

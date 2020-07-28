@@ -17,7 +17,9 @@ def option(request):
         player_uid = data.get('player_uid')
         option = data.get('option')
         selected = data.get('selected')
-        return HttpResponse(json.dumps(utils.function_handler(room_uid, player_uid, option, selected)))
+        utils.function_handler(room_uid, player_uid, option, selected)
+        play_area = utils.load_play_info(room_uid, player_uid)
+        return HttpResponse(json.dumps(play_area))
 
     # An item has been selected and the possible options need to be displayed.
     elif(request.method == 'GET'):
@@ -65,5 +67,6 @@ def open_room(request):
 def load_play(request):
     player_uid = request.GET.get("player_uid")
     room_uid = request.GET.get("room_uid")
-    return HttpResponse(json.dumps(utils.load_play_info(room_uid, player_uid)))
+    play_area = utils.load_play_info(room_uid, player_uid)
+    return HttpResponse(json.dumps(play_area))
 

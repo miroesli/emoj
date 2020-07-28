@@ -305,7 +305,7 @@ def pass_turn(room_uid, player_uid, new_player_uid):
 def give_card(room_uid, player_uid, new_player_uid, card_uid):
     conn = get_conn()
     with conn.cursor() as curs:
-        query = """update cards_in_play set player_uid=%s where room_uid=%s, player_uid=%s, card_uid=%s"""
+        query = """update cards_in_play set player_uid=%s where room_uid=%s and player_uid=%s and card_uid=%s"""
         curs.execute(query, [new_player_uid, room_uid, player_uid, card_uid])
     conn.commit()
 

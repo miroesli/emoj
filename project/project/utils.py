@@ -154,5 +154,5 @@ def load_play_info(room_uid, player_uid):
     for deck in template.decks:
         deck.game_board_location = str(deck.game_board_location.x) + str(deck.game_board_location.y)
 
-    return {"player": player.to_dict(), "players": [i.to_dict() for i in room_players], "room": room,
+    return {"player": player.to_dict(), "players": [i.to_dict() for i in room_players], "room": room.to_dict(),
             "template": template.to_dict()}
