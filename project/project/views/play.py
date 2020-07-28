@@ -31,7 +31,4 @@ def render_play(request, room_uid):
                                 db_handler.DBClassPOINT(0, 0))
 
         context = utils.load_play_info(room_uid, player_uid)
-
-
-
         return render(request, 'play.html', context=context)

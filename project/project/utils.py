@@ -132,14 +132,14 @@ def function_handler(room_uid, player_uid, option, selected):
             db_handler.log_action(room_uid, player.display_name + " placed " + str(len(selected.get('cards'))) + " card(s)")
     elif option == "deal":
         for i in range(option.get('quantity')):
-            deal_card(room_uid,selected.get('players')[0].player_uid, selected.get('locations')[0])
-            #db_handler.log_action(room_uid, player.display_name + " placed " + str(len(selected.get('cards'))) + " card(s)")
+            deal_card(room_uid, selected.get('players')[0].player_uid, selected.get('locations')[0])
+        db_handler.log_action(room_uid, player.display_name + " was dealt " + str(option.get('quantity')) + " card(s)")
     elif option == "draw":
-        pass
+        pass#todo
     elif option == "deal location":
-        pass
+        pass#todo
     elif option == "deal location revealed":
-        pass
+        pass#todo
     else:
         raise LookupError("option not found")
 
