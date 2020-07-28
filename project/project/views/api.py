@@ -51,3 +51,10 @@ def open_room(request):
         db_handler.insert_room(room_name, None, room_uid, template_uid, None)
 
         return HttpResponse(json.dumps({'room_uid': str(room_uid)}))
+
+
+def load_play(request):
+    player_uid = request.GET.get("player_uid")
+    room_uid = request.GET.get("room_uid")
+    return HttpResponse(json.dumps(utils.load_play_info(room_uid, player_uid)))
+

@@ -25,6 +25,7 @@ urlpatterns = [
     path('api/<int:id>', api.id),
     path('api/options', api.option),
     path('api/open_room', api.open_room),
+    path('api/load_play', api.load_play),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('home/', home.render_home, name='home'),

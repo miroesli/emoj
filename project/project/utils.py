@@ -1,7 +1,7 @@
 from project import db_handler
 from django.http import HttpResponse
 import random
-
+from collections import deque
 # After an item  is selected scan for what possible functions are supported by the current
 # combination of selected options.
 
@@ -119,3 +119,34 @@ def transfer_card(room_uid, entity_type1, entity_type2, entity_id1, entity_id2):
     elif entity_type2 not in ['card', 'player', 'location']:
         pass  # throws err
     room = db_handler.get_room(room_uid)
+
+
+# made to refresh page status using API
+def load_play_info(room_uid, player_uid):
+    room = db_handler.get_room(room_uid)
+    player = db_handler.get_player(player_uid, room_uid)
+    room_players = db_handler.get_players()
+    player_index = None
+    for index, player in enumerate(room_players):
+        if str(player.player_uid) == player_uid:
+            player_index = index
+            break
+
+    room_players = deque(room_players)
+    room_players.rotate(player_index)  # moving list to correct order
+    room_players = list(room_players)
+    # removing current players from room_players
+    room_players = room_players[1:]
+
+    player.hand = [i.to_dict() for i in db_handler.get_player_cards(
+        player.player_uid, room_uid)]
+    for p in room_players:
+        p.hand = db_handler.get_player_card_revealed(
+            p.player_uid, room_uid)
+        p.card_count = db_handler.get_player_card_count(
+            p.player_uid, room_uid)
+
+    template = db_handler.get_room_template(room_uid)
+    template.decks = db_handler.get_template_decks(template.template_uid)
+    return {"player": player.to_dict(), "players": [i.to_dict() for i in room_players], "room": room,
+            template: template.to_dict()}

@@ -355,6 +355,7 @@ def get_template_decks(template_uid):
         curs.execute(query, [template_uid])
         return [DBClassDeck(*i) for i in curs]
 
+
 def get_first_deck():
     conn = get_conn()
     with conn.cursor() as curs:

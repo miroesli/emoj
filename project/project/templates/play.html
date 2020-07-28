@@ -101,12 +101,30 @@
 </head>
 <body>
 <script>
+        function load_play(){
+            axios.defaults.xsrfCookieName = 'csrftoken'
+            axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+            axios.get("/api/load_play",{
+                params: {
+                  player_uid:play_area.player.player_uid,
+                  room_uid:play_area.room.room_uid,
+                },
+            }).then((response) => {
+                //hack for vue to rerender
+                debugger;
+            }).catch((response) => {
+                debugger;
+                console.log(response.status);
+            });
+        }
         //preload cards into js with django. we can make this dynamic later with vue
         let play_area = {"players":{{players | safe}},"player":{{player | safe}},"room":{{room | safe}}}
         let selected = {"players":[], "locations":[], "cards":[]};
         let options =   [];
         let play_area_vue;
         window.onload = function () {
+            //let intervalID = window.setInterval(load_play, 1500);
+            //load_play();
             //vue setup. delimeters set to square brackets because django uses curly
             play_area_vue = new Vue({
                 delimiters: ['[[', ']]'],
@@ -171,7 +189,6 @@
                         });
                     },
                     take_action:function(option){
-                        debugger;
                         axios.defaults.xsrfCookieName = 'csrftoken'
                         axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
                         axios.post("/api/options",{
