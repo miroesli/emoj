@@ -91,7 +91,7 @@ def function_handler(room_uid, player_uid, option, selected):
     elif option == "give":
         p2 = db_handler.get_player(selected.get('players')[0], room_uid)
         for i in selected.get('cards'):
-            db_handler.give_card(room_uid, player_uid, selected.get('players'[0]),i)
+            db_handler.give_card(room_uid, player_uid, selected.get('players')[0], i)
             card = db_handler.get_card(i)
             db_handler.log_action(room_uid, player.display_name+" gave "+ card.card_name + " to "+ p2.display_name)
     elif option =="place revealed":

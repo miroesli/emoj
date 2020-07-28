@@ -249,20 +249,9 @@
                               option:option.option
 
                         }).then((response) => {
-                            for (var key in play_area) {
-                                if(Array.isArray(play_area[key])){
-                                    play_area[key].splice(0,options.length);
-                                    play_area[key].push(... response.data[key]);
-                                }
-                                else{
-                                    play_area[key]=response.data[key];
-                                }
-
-                            }
-                            play_area.
-
+                            debugger;
                             play_area = response.data;
-                            play_area_vue.$forceUpdate();
+                            this.$forceUpdate();
                         }).catch((response) => {
                             debugger;
                             console.log(response.status);
