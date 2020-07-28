@@ -257,7 +257,7 @@ def load_cards_in_play(room_uid):
 
 
 #  play area functions
-def get_location_cards(room_uid,game_board_location_x,game_board_location_y):
+def get_location_cards(room_uid,game_board_location_x, game_board_location_y):
     conn = get_conn()
     with conn.cursor() as curs:
         query = """ select card_name, c.card_uid, media_uuid, media_class, creation_timestamp, revealed 
@@ -269,21 +269,21 @@ def get_location_cards(room_uid,game_board_location_x,game_board_location_y):
 # this pulls all of the cards with maximum index, randomize which card we draw in python
 
 
-def draw_game_board_location_top_card(room_uid, game_board_location):
+def draw_game_board_location_top_card(room_uid, game_board_location_x, game_board_location_y):
     conn = get_conn()
     with conn.cursor() as curs:
         query = """ select card_uid::varchar from cards_in_play where room_uid=%s and game_board_location_x=%s and game_board_location_y=%s"""
-        curs.execute(query, [room_uid, game_board_location.x,game_board_location.y])
+        curs.execute(query, [room_uid, game_board_location_x,game_board_location_y])
         return [i[0] for i in curs]
 
 
-def update_card_location(room_uid, card_uid, game_board_location, player_uid):
+def update_card_location(room_uid, card_uid, game_board_location_x, game_board_location_y, player_uid, revealed=False):
     conn = get_conn()
     with conn.cursor() as curs:
-        query = """update cards_in_play set game_board_location_x=NULL,game_board_location_y=NULL, player_uid=%s
+        query = """update cards_in_play set game_board_location_x=%s,game_board_location_y=%s, player_uid=%s,revealed=%s
                    where room_uid = %s and card_uid = %s 
                 """
-        curs.execute(query, [player_uid, room_uid, card_uid])
+        curs.execute(query, [game_board_location_x,game_board_location_y,player_uid,revealed, room_uid, card_uid])
     conn.commit()
 
 
