@@ -150,7 +150,7 @@
 
         //preload cards into js with django. we can make this dynamic later with vue
         let play_area = {"players":{{players | safe}},"player":{{player | safe}},"room":{{room | safe}},
-            "template": {{ template | safe }}, "positions": {{positions | safe}}};
+            "template": {{ template | safe }}, "positions": {{positions | safe}}, "room_log":{{ room_log | safe}}};
         let selected = {"players":[], "locations":[], "cards":[]};
         {# position {'top_card':  {media_class: }}, #}
         {#let positions = {{ positions | safe }};#}
@@ -162,6 +162,8 @@
             play_area.players.push(... new_play_area.players);
             play_area.player.hand.splice(0,play_area.player.hand.length);
             play_area.player.hand.push(... new_play_area.player.hand);
+            play_area.room_log.splice(0, play_area.room_log.length);
+            play_area.room_log.push(... new_play_area.room_log);
         }
 
         function load_play(){
@@ -303,7 +305,13 @@
             <div id="main-area">
                 <div id="top-bar" style="display: flex; justify-content: space-around">
                     <div v-for="player in middle_players"  class="player card text-white bg-info" v-bind:class="{ selected: selected.players.includes(player.player_uid) }" @click="toggle_player_selection(player.player_uid)">
-                        <small class="card-header">Opponent: [[player.display_name]]</small>
+                        <small class="card-header">Opponent: [[player.display_name]]
+                            <template v-if="player.player_uid === play_area.room.active_player_uid">
+                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-star-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                            </svg>
+                        </template>
+                        </small>
                         <div class="card-body" style="white-space:normal">
                             <small>Details</small>
                             <small>Cards in Hand:[[player.card_count]]</small>
@@ -313,7 +321,15 @@
                 <div id="board-area">
                     <div id="left-bar" class="side-bar">
                         <div class="player card text-white bg-info"  v-bind:class="{ selected: selected.players.includes(left_player.player_uid) }" @click="toggle_player_selection(left_player.player_uid)">
-                        <small class="card-header">Opponent: [[left_player.display_name]]</small>
+                        <small class="card-header">Opponent: [[left_player.display_name]]
+
+                        <template v-if="left_player.player_uid === play_area.room.active_player_uid">
+                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-star-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                            </svg>
+                        </template>
+
+                        </small>
                         <div class="card-body" style="white-space:normal">
                             <small>Details</small>
                             <small>Cards in Hand:[[left_player.card_count]]</small>
@@ -338,7 +354,15 @@
                     </div>
                     <div id="right-bar" class="side-bar">
                         <div class="player card text-white bg-info mb-3"  v-bind:class="{ selected: selected.players.includes(right_player.player_uid) }" @click="toggle_player_selection(right_player.player_uid)" >
-                        <small class="card-header">Opponent: [[right_player.display_name]]</small>
+                        <small class="card-header">Opponent: [[right_player.display_name]]
+                        <template v-if="left_player.player_uid === play_area.room.active_player_uid">
+                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-star-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                            </svg>
+                        </template>
+
+
+                        </small>
                         <div class="card-body" style="white-space:normal">
                             <small>Details</small>
                             <small>Cards in Hand:[[right_player.card_count]]</small>
@@ -347,7 +371,14 @@
                     </div>
                 </div>
                 <div id="hand-area" class="card bg-secondary text-white">
-                    <div class="card-header">Hand</div>
+                    <div class="card-header">Hand
+                        <template v-if="play_area.player.player_uid === play_area.room.active_player_uid">
+                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-star-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                            </svg>
+                        </template>
+                        </div>
+
                     <div class="card-body">
                         <template v-for="card in play_area.player.hand">
                             <div class="card-outline" v-bind:class="{selected: selected.cards.includes(card.card_uid)}" @click="toggle_card_selection(card.card_uid)" >
@@ -359,13 +390,22 @@
                     </div>
                 </div>
             </div>
-            <div id="options-area" class="card text-white bg-success " style="min-width: 80px">
-                <div class="card-header">Options</div>
-                <div class="card-body">
-                    <template v-for="option in options">
-                        <div @click="take_action(option)" style="border: 5px solid white;padding 5px ">[[option.option_text]]</div>
-                    </template>
+            <div id="options-area" style="min-width: 80px; display: grid; grid-template-columns: 1fr; grid-template-rows: 50% 50%;     border-radius: 0.25rem;">
+                <div  class="card text-white bg-success " >
+                    <div class="card-header">Options</div>
+                    <div class="card-body" style="overflow-y: scroll; height: 100%; max-height: 100%;">
+                            <template v-for="option in options">
+                                <div @click="take_action(option)" style="border: 5px solid white;padding: 5px ">[[option.option_text]]</div>
+                            </template>
+                    </div>
                 </div>
+                <div  class="card text-white bg-success " >
+                    <div class="card-header">Game Log</div>
+                    <div class="card-body" style="overflow-y: scroll; height: 100%; max-height: 100%;">
+                            <small v-for="log in play_area.room_log">[[ log ]]<br></small>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
