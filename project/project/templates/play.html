@@ -68,12 +68,12 @@
             width: 71px;
             height: 97px;
         }
-        {#.selected{#}
-        {#    border:5px solid var(--red);#}
-        {#    margin: 0px !important;#}
-        {#    box-sizing: content-box;#}
-        {#    border-radius: 5px;#}
-        {# }#}
+        .player.selected{
+            border:5px solid var(--red);
+            margin: 0px !important;
+            box-sizing: content-box;
+            border-radius: 5px;
+         }
         .player{
             flex-grow:1;
             max-width: 150px;
@@ -126,12 +126,6 @@
             border: 5px solid var(--red);
         }
 
-        {##hand-area .card-outline.selected {#}
-        {#    background: var(--red);#}
-        {#    justify-content: unset;#}
-        {#    border: none;#}
-        {#}#}
-
         .card-position.selected .plus {
             display: none;
         }
@@ -146,6 +140,7 @@
             align-items: center;
             background: #6c757d57;
             border-radius: 5px;
+            box-sizing: border-box;
         }
 
     </style>
@@ -156,7 +151,7 @@
         //preload cards into js with django. we can make this dynamic later with vue
         let play_area = {"players":{{players | safe}},"player":{{player | safe}},"room":{{room | safe}},
             "template": {{ template | safe }}, "positions": {{positions | safe}}};
-        let selected = {"players":[], "locations":[], "cards":[], "positions" : []};
+        let selected = {"players":[], "locations":[], "cards":[]};
         {# position {'top_card':  {media_class: }}, #}
         {#let positions = {{ positions | safe }};#}
         let options =   [];
@@ -234,11 +229,11 @@
                         play_area_vue.get_options();
                     },
                     toggle_position_selection: function(position) {
-                        let index = selected.positions.findIndex(p => p.x === position.x && p.y === position.y);
+                        let index = selected.locations.findIndex(p => p.x === position.x && p.y === position.y);
                         if(index >= 0){
-                            selected.positions.splice(index, 1);
+                            selected.locations.splice(index, 1);
                         }else{
-                            selected.positions.push(position);
+                            selected.locations.push(position);
                         }
                     },
                     get_options:function(){
@@ -328,7 +323,7 @@
                         <div class="card-body grid-container" >
                             <template v-for="p in play_area.positions" >
                                 <div  class="grid-item" :data-position_x="[[p.x]]" :data-position_y="[[p.y]]" >
-                                    <div v-if="p.template_uid" class="card-outline" v-bind:class="{selected: selected.positions.findIndex(i => i.x === p.x && i.y === p.y) >= 0}" @click="toggle_position_selection(p)" >
+                                    <div v-if="p.template_uid" class="card-outline" v-bind:class="{selected: selected.locations.findIndex(i => i.x === p.x && i.y === p.y) >= 0}" @click="toggle_position_selection(p)" >
                                         <div v-if="p.deck_uid" class="card-position">
                                             <img v-if="p.top_card" :class="p.top_card.media_class" >
                                             <img v-else src="../static/media/png-cardback.png" style=" height: 100px">
@@ -354,8 +349,8 @@
                     <div class="card-body">
                         <template v-for="card in play_area.player.hand">
                             <div class="card-outline" v-bind:class="{selected: selected.cards.includes(card.card_uid)}" @click="toggle_card_selection(card.card_uid)" >
-                                <div class="card-position" style="border: none">
-                                    <img :class="card.media_class" >
+                                <div class="card-position" style="border: none; background: none">
+                                    <div  :class="card.media_class" >
                                 </div>
                             </div>
                         </template>
