@@ -97,6 +97,52 @@
             font-family: "Playfair Display", Georgia, "Times New Roman", serif;
         }
 
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+        }
+        .grid-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+
+        .card-position {
+            width: 71px;
+            height: 97px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--danger)
+            {#border-radius: 4px;#}
+        }
+
+        .card-position.selected {
+            border: 1px solid var(--gray);
+            border-radius: 3px;
+            background: #e9ecef;
+            {#border: 1px solid;#}
+            {#background: var(--info);#}
+        }
+        .card-position.selected .plus {
+            display: none;
+        }
+
+        .card-outline {
+            width: 84px;
+            height: 110px;
+            cursor: pointer;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #6c757d57;
+            border-radius: 5px;
+        }
+
     </style>
 </head>
 <body>
@@ -118,7 +164,7 @@
             });
         }
         //preload cards into js with django. we can make this dynamic later with vue
-        let play_area = {"players":{{players | safe}},"player":{{player | safe}},"room":{{room | safe}}}
+        let play_area = {"players":{{players | safe}},"player":{{player | safe}},"room":{{room | safe}}, "template": {{ template | safe }}}
         let selected = {"players":[], "locations":[], "cards":[]};
         let options =   [];
         let play_area_vue;
@@ -247,7 +293,32 @@
                     </div>
 
                     </div>
-                    <div id="board-grid-area" class="card text-white bg-secondary">
+                    <div id="board-grid-area" class="card ">
+                        <div class="card-body grid-container" >
+                                <template v-for="x in 4" >
+                                    <div v-for="y in 6"  class="grid-item" :data-position_x="[[x-1]]" :data-position_y="[[y-1]]" >
+                                        <template v-if="play_area.template.decks.filter(e => e.game_board_location === ((x-1).toString()+(y-1).toString())).length > 0">
+                                            <div>Test</div>
+                                        </template>
+
+                                        <template v-if="x===1 && y===1">
+                                            <div class="card-outline">
+                                                <div class="card-position current-deck" style="overflow: hidden">
+                                                    <img src="../static/media/png-cardback.png" style=" height: 100px">
+                                                </div>
+                                            </div>
+                                        </template>
+
+                                        <template v-else >
+                                            <div class="card-outline">
+                                                <div class="card-position">
+                                                </div>
+                                            </div>
+                                        </template>
+
+                                    </div>
+                                </template>
+                            </div>
                         <button id ="test_deck" onclick="testAxios(this)"> Style me Please</button>
                     </div>
                     <div id="right-bar" class="side-bar">
