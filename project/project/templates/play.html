@@ -163,9 +163,6 @@
         let play_area_vue;
 
         function rerender(new_play_area){
-            for(let key in selected){
-                selected[key].splice(0,selected[key].length);
-            }
             play_area.players.splice(0,play_area.players.length);
             play_area.players.push(... new_play_area.players);
             play_area.player.hand.splice(0,play_area.player.hand.length);
@@ -189,6 +186,7 @@
         }
 
         window.onload = function () {
+            //uncomment bellow line to get real time sync, it's a pain for debugging so i commented it for now
             //let intervalID = window.setInterval(load_play, 500);
             //vue setup. delimeters set to square brackets because django uses curly
             play_area_vue = new Vue({
@@ -271,6 +269,9 @@
                               option:option.option
 
                         }).then((response) => {
+                            for(let key in selected){
+                                selected[key].splice(0,selected[key].length);
+                            }
                             rerender(response.data);
                         }).catch((response) => {
                             debugger;
