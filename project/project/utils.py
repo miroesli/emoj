@@ -125,13 +125,16 @@ def transfer_card(room_uid, entity_type1, entity_type2, entity_id1, entity_id2):
 def load_play_info(room_uid, player_uid):
     room = db_handler.get_room(room_uid)
     player = db_handler.get_player(player_uid, room_uid)
-    room_players = db_handler.get_players()
+    room_players = db_handler.get_room_players(room_uid)
     player_index = None
     for index, player in enumerate(room_players):
         if str(player.player_uid) == player_uid:
             player_index = index
             break
-
+    # if not player_index:
+    #     # TODO: implement
+    #     db_handler.add_player_to_room(room_uid, player_uid)
+    #     room_players = db_handler.get_room_players(room_uid)
     room_players = deque(room_players)
     room_players.rotate(player_index)  # moving list to correct order
     room_players = list(room_players)
@@ -148,5 +151,8 @@ def load_play_info(room_uid, player_uid):
 
     template = db_handler.get_room_template(room_uid)
     template.decks = db_handler.get_template_decks(template.template_uid)
+    for deck in template.decks:
+        deck.game_board_location = str(deck.game_board_location.x) + str(deck.game_board_location.y)
+
     return {"player": player.to_dict(), "players": [i.to_dict() for i in room_players], "room": room,
-            template: template.to_dict()}
+            "template": template.to_dict()}
