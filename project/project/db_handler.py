@@ -395,5 +395,5 @@ def clear_log(room_uid):
     conn = get_conn()
     with conn.cursor() as curs:
         query = """delete from play_log where room_uid=%s"""
-        curs.execute(query, [room_uid, room_uid])
+        curs.execute(query, [ room_uid])
     conn.commit()
