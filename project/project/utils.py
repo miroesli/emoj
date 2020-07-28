@@ -23,9 +23,24 @@ def display_options(room_uid, player_uid, selected):
         else:
             pass  # throw error
 
-    # if there is more than 1 location selected there are no options
-    if len(selected.get('locations')) > 1:
+    if len(selected.get('locations')) > 2:
         return []
+    # multiple locations
+    if len(selected.get('locations')) == 2:
+        if len(selected.get('players'))>0 or len(selected.get('cards'))>0:
+            return []
+        else:
+            non_empty = 0
+            for location in selected.get('locations'):
+                location_cards = db_handler.get_location_cards(room_uid, location.get('x'), location.get('y'))
+                if len(location_cards) > 0:
+                    non_empty+=1
+
+            if non_empty == 1:
+                return [{"option": "deal location revealed", "option_text": "deal from selected deck face up"},
+                        {"option": "deal location", "option_text": "deal from selected deck face down"}]
+            else:
+                return []
     elif len(selected.get('locations')) == 1:
         # gets cards at location
         location_cards = db_handler.get_location_cards(room_uid, selected.get('locations')[0].get('x'),
@@ -43,15 +58,19 @@ def display_options(room_uid, player_uid, selected):
         # non empty location selected
         else:
             # if we also select a player
-            if len(selected.get('players')) > 0:
+            if len(selected.get('players')) > 0 and len(selected.get('cards')) == 0:
                 # deal that player a card(for each revealed) + deal player X hidden cards
-                return ([{"option": "deal", "quantity":i,
+                k = min(7 - len(selected.get('players')), len(location_cards))
+                return ([{"option": "deal", "quantity": i,
                             "option_text": "deal "+str(i)+" card(s) to "+p.display_name}
-                        for p in selected.get('players') for i in range(1,6)])
+                        for p in selected.get('players') for i in range(1,k)])
             # only non empty location selected
-            else:
+            elif len(selected.get('players')) == 0:
                 # draw a card(for each revealed) + draw player X hidden cards
-                return [{"option": "draw", "quantity": i, "option_text": "draw "+str(i)+" card(s)"} for i in range(1,6)]
+                k = min(6, len(location_cards))
+                return [{"option": "draw", "quantity": i, "option_text": "draw "+str(i)+" card(s)"} for i in range(1, k)]
+            else:
+                return []
     # zero locations
     else:
         # player selected
@@ -60,7 +79,9 @@ def display_options(room_uid, player_uid, selected):
         elif len(selected.get('players')) == 1:
             if len(selected.get('cards')) > 0:
                 return [{"option": "give",
-                         "option_text": "give selected card(s) to " + selected.get('players')[0].display_name}]
+                         "option_text": "give selected card(s) to " + selected.get('players')[0].display_name},
+                        {"option": "give revealed",
+                         "option_text": "reveal and give selected card(s) to " + selected.get('players')[0].display_name}]
             # only a player is selected so we can pass them the turn
             else:
                 return [{"option": "pass", "option_text": "pass turn to " + selected.get('players')[0].display_name}]
@@ -78,9 +99,10 @@ def display_options(room_uid, player_uid, selected):
 #todo location stuff
 def function_handler(room_uid, player_uid, option, selected):
 
-    posible_options = ["reveal", "pass", "give revealed", "give", "place revealed", "place"]
+    posible_options = ["reveal", "pass", "give revealed", "give", "place revealed", "place", "deal", "draw",
+                       "deal location", "deal location revealed"]
     if option not in posible_options:
-        pass #throw error
+        raise LookupError("option not found" + option)
     player = db_handler.get_player(player_uid, room_uid)
     if option == "reveal":
         for i in selected.get('cards'):
@@ -97,14 +119,29 @@ def function_handler(room_uid, player_uid, option, selected):
             db_handler.give_card(room_uid, player_uid, selected.get('players')[0], i)
             if option == "give revealed":
                 card = db_handler.get_card(i)
-                db_handler.log_action(room_uid, player.display_name+" gave "+ card.card_name + " to "+ p2.display_name)
-            else:
-                db_handler.log_action(room_uid, player.display_name+" gave a card to " + p2.display_name)
-    elif option =="place revealed":
+                db_handler.log_action(room_uid, player.display_name+" gave "+ card.card_name + " to " + p2.display_name)
+        if option != "give revealed":
+            db_handler.log_action(room_uid, player.display_name+" gave a card to " + p2.display_name)
+    elif option == "place revealed" or option == "place":
+        for card_uid in selected.get('cards'):
+            card = db_handler.get_card(card_uid)
+            transfer_card(room_uid,card.card_uid,"location",selected.get('locations')[0],True)
+            if option == "place revealed":
+                db_handler.log_action(room_uid,player.display_name + " placed " + card.card_name)
+        if option == "place":
+            db_handler.log_action(room_uid, player.display_name + " placed " + str(len(selected.get('cards'))) + " card(s)")
+    elif option == "deal":
+        for i in range(option.get('quantity')):
+            deal_card(room_uid,selected.get('players')[0].player_uid, selected.get('locations')[0])
+            #db_handler.log_action(room_uid, player.display_name + " placed " + str(len(selected.get('cards'))) + " card(s)")
+    elif option == "draw":
+        pass
+    elif option == "deal location":
+        pass
+    elif option == "deal location revealed":
         pass
     else:
-        pass
-
+        raise LookupError("option not found")
 
 
 def reset_room(room_uid):
@@ -120,12 +157,8 @@ def deal_card(room_uid, player_uid, game_board_location):
     db_handler.update_card_location(room_uid, card_uid, None, player_uid)
 
 
-def transfer_card(room_uid, entity_type1, entity_type2, entity_id1, entity_id2):
-    if entity_type1 not in ['card', 'player', 'location']:
-        pass  # throws err
-    elif entity_type2 not in ['card', 'player', 'location']:
-        pass  # throws err
-    room = db_handler.get_room(room_uid)
+def transfer_card(room_uid, card_uid, entity_type, entity_id):
+    pass
 
 
 # made to refresh page status using API
@@ -138,10 +171,9 @@ def load_play_info(room_uid, player_uid):
         if str(player.player_uid) == player_uid:
             player_index = index
             break
-    # if not player_index:
-    #     # TODO: implement
-    #     db_handler.add_player_to_room(room_uid, player_uid)
-    #     room_players = db_handler.get_room_players(room_uid)
+    if not player_index:
+        db_handler.insert_room_player(room_uid, player_uid)
+        room_players = db_handler.get_room_players(room_uid)
     room_players = deque(room_players)
     room_players.rotate(player_index)  # moving list to correct order
     room_players = list(room_players)
