@@ -155,6 +155,17 @@
         let positions = {{ positions | safe }};
         let options =   [];
         let play_area_vue;
+
+        function rerender(new_play_area){
+            for(let key in selected){
+                selected[key].splice(0,selected[key].length);
+            }
+            play_area.players.splice(0,play_area.players.length);
+            play_area.players.push(... new_play_area.players);
+            play_area.player.hand.splice(0,play_area.player.hand.length);
+            play_area.player.hand.push(... new_play_area.player.hand);
+        }
+
         function load_play(){
             axios.defaults.xsrfCookieName = 'csrftoken'
             axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
@@ -164,9 +175,7 @@
                   room_uid:play_area.room.room_uid,
                 },
             }).then((response) => {
-                debugger;
-                play_area = response.data;
-                play_area_vue.$forceUpdate();
+                rerender(response.data);
             }).catch((response) => {
                 debugger;
                 console.log(response.status);
@@ -249,9 +258,7 @@
                               option:option.option
 
                         }).then((response) => {
-                            debugger;
-                            play_area = response.data;
-                            this.$forceUpdate();
+                            rerender(response.data);
                         }).catch((response) => {
                             debugger;
                             console.log(response.status);
@@ -288,7 +295,7 @@
                         <small class="card-header">Opponent: [[player.display_name]]</small>
                         <div class="card-body" style="white-space:normal">
                             <small>Details</small>
-                            {# <small v-for="(value, name) in player" style="white-space: normal">[[name]]: [[value]]</small>#}
+                            <small>Cards in Hand:[[player.card_count]]</small>
                         </div>
                     </div>
                 </div>
@@ -298,7 +305,7 @@
                         <small class="card-header">Opponent: [[left_player.display_name]]</small>
                         <div class="card-body" style="white-space:normal">
                             <small>Details</small>
-                            <small>left player</small>
+                            <small>Cards in Hand:[[left_player.card_count]]</small>
                         </div>
                     </div>
 
@@ -322,7 +329,7 @@
                         <small class="card-header">Opponent: [[right_player.display_name]]</small>
                         <div class="card-body" style="white-space:normal">
                             <small>Details</small>
-                            <small>right player</small>
+                            <small>Cards in Hand:[[right_player.card_count]]</small>
                         </div>
                     </div>
                     </div>
