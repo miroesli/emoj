@@ -259,7 +259,7 @@ def load_cards_in_play(room_uid):
 def get_location_cards(room_uid,game_board_location_x,game_board_location_y):
     conn = get_conn()
     with conn.cursor() as curs:
-        query = """ select card_name, card_uid, media_uuid, media_class, creation_timestamp, revealed 
+        query = """ select card_name, c.card_uid, media_uuid, media_class, creation_timestamp, revealed 
                     from cards_in_play cip join cards c on cip.card_uid = c.card_uid 
                     where room_uid =%s and game_board_location_x =%s and game_board_location_y =%s
         """
@@ -289,7 +289,7 @@ def update_card_location(room_uid, card_uid, game_board_location, player_uid):
 def reveal_card(room_uid, player_uid, card_uid):
     conn = get_conn()
     with conn.cursor() as curs:
-        query = """update cards_in_play set revealed = true where room_uid=%s, player_uid=%s, card_uid=%s"""
+        query = """update cards_in_play set revealed = true where room_uid=%s and player_uid=%s and card_uid=%s"""
         curs.execute(query,[room_uid, player_uid, card_uid])
     conn.commit()
 
@@ -388,4 +388,12 @@ def log_action(room_uid, message):
     with conn.cursor() as curs:
         query = """insert into play_log(message_uid, room_uid, message) values(uuid_generate_v4(), %s,%s)"""
         curs.execute(query, [room_uid, message])
+    conn.commit()
+
+
+def clear_log(room_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """delete from play_log where room_uid=%s"""
+        curs.execute(query, [room_uid, room_uid])
     conn.commit()

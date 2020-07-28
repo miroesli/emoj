@@ -28,7 +28,8 @@ def display_options(room_uid, player_uid, selected):
         return []
     elif len(selected.get('locations')) == 1:
         # gets cards at location
-        location_cards = db_handler.get_location_cards(room_uid, selected.get('locations')[0][0], selected.get('locations')[0][1])
+        location_cards = db_handler.get_location_cards(room_uid, selected.get('locations')[0].get('x'),
+                                                       selected.get('locations')[0].get('y'))
         # if an empty location selected
         if len(location_cards) == 0:
             # if the only thing selected is an empty location then we have no options
@@ -44,11 +45,13 @@ def display_options(room_uid, player_uid, selected):
             # if we also select a player
             if len(selected.get('players')) > 0:
                 # deal that player a card(for each revealed) + deal player X hidden cards
-                pass
+                return ([{"option": "deal", "quantity":i,
+                            "option_text": "deal "+str(i)+" card(s) to "+p.display_name}
+                        for p in selected.get('players') for i in range(1,6)])
             # only non empty location selected
             else:
                 # draw a card(for each revealed) + draw player X hidden cards
-                pass
+                return [{"option": "draw", "quantity": i, "option_text": "draw "+str(i)+" card(s)"} for i in range(1,6)]
     # zero locations
     else:
         # player selected
@@ -75,7 +78,7 @@ def display_options(room_uid, player_uid, selected):
 #todo location stuff
 def function_handler(room_uid, player_uid, option, selected):
 
-    posible_options = ["reveal", "pass", "give", "place revealed", "place"]
+    posible_options = ["reveal", "pass", "give revealed", "give", "place revealed", "place"]
     if option not in posible_options:
         pass #throw error
     player = db_handler.get_player(player_uid, room_uid)
@@ -88,12 +91,15 @@ def function_handler(room_uid, player_uid, option, selected):
         db_handler.pass_turn(room_uid, player_uid, selected.get('players')[0])
         p2 = db_handler.get_player(selected.get('players')[0], room_uid)
         db_handler.log_action(room_uid, player.display_name+" passes the turn to "+ p2.display_name)
-    elif option == "give":
+    elif option == "give" or option == "give revealed":
         p2 = db_handler.get_player(selected.get('players')[0], room_uid)
         for i in selected.get('cards'):
             db_handler.give_card(room_uid, player_uid, selected.get('players')[0], i)
-            card = db_handler.get_card(i)
-            db_handler.log_action(room_uid, player.display_name+" gave "+ card.card_name + " to "+ p2.display_name)
+            if option == "give revealed":
+                card = db_handler.get_card(i)
+                db_handler.log_action(room_uid, player.display_name+" gave "+ card.card_name + " to "+ p2.display_name)
+            else:
+                db_handler.log_action(room_uid, player.display_name+" gave a card to " + p2.display_name)
     elif option =="place revealed":
         pass
     else:
@@ -103,6 +109,7 @@ def function_handler(room_uid, player_uid, option, selected):
 
 def reset_room(room_uid):
     db_handler.clear_cards_in_play(room_uid)
+    db_handler.clear_log(room_uid)
     db_handler.load_cards_in_play(room_uid)
 
 

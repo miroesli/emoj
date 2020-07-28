@@ -235,6 +235,7 @@
                         }else{
                             selected.locations.push(position);
                         }
+                        play_area_vue.get_options();
                     },
                     get_options:function(){
                         axios.defaults.xsrfCookieName = 'csrftoken'
@@ -267,6 +268,7 @@
                             for(let key in selected){
                                 selected[key].splice(0,selected[key].length);
                             }
+                            options.splice(0,options.length);
                             rerender(response.data);
                         }).catch((response) => {
                             debugger;
