@@ -66,9 +66,15 @@ def display_options(room_uid, player_uid, selected):
                          for p in selected.get('players')])
             # only non empty location selected
             elif len(selected.get('players')) == 0:
-                # draw a card(for each revealed) + draw player X hidden cards
-                return [{"option": "draw",  "option_text": "draw a card"},
+                # draw a card
+                if len(selected.get('cards')) == 0:
+                    return [{"option": "draw",  "option_text": "draw a card"},
                         {"option": "shuffle",  "option_text": "shuffle this pile"}]
+                else:
+                    return [{"option": "draw", "option_text": "draw a card"},
+                            {"option": "shuffle", "option_text": "shuffle this pile"},
+                            {"option": "place revealed", "option_text": "place selected card(s) face up"},
+                            {"option": "place", "option_text": "place selected card(s) face down"}]
             else:
                 return []
     # zero locations
@@ -201,7 +207,11 @@ def transfer_card(room_uid, card_uid, entity_type, entity_id,revealed=False):
     if entity_type =='player':
         db_handler.update_card_location(room_uid, card_uid, None, None, entity_id,revealed)
     elif entity_type =='location':
-        idx = 1 + db_handler.get_position_highest_index()
+        top_card = db_handler.draw_game_board_location_top_card(room_uid, entity_id.get('x'), entity_id.get('y'))
+        if len(top_card)==0:
+            idx = 1
+        else:
+            idx = 1+db_handler.get_room_card(top_card[0], room_uid).order_index
         db_handler.update_card_location(room_uid, card_uid, entity_id.get('x'), entity_id.get('y'), None, revealed,idx)
 
 
@@ -243,21 +253,16 @@ def load_play_info(room_uid, player_uid):
             if p['x'] == i.game_board_location.x and p['y'] == i.game_board_location.y:
                 p.update(i.to_dict())
                 top_cards = db_handler.draw_game_board_location_top_card(room_uid, p['x'], p['y'])
-
-                print(p['x'], p['y'])
-                print(top_cards)
                 if len(top_cards) == 0:
                     p['top_card'] = ''
                 elif len(top_cards) == 1:
                     card = db_handler.get_room_card(top_cards[0], room_uid)
-                    print(card.to_dict())
                     if card.revealed:
                         p['top_card'] = card.media_class
                     else:
                         p['top_card'] = 'facedown'
                 else:
                     p['top_card'] = 'facedown'
-                print(p['top_card'])
 
 
     room_log = db_handler.get_room_log(room_uid)

@@ -58,12 +58,14 @@ class DBClassDeck(NiceObject):
 
 
 class DBClassCard(NiceObject):
-    def __init__(self, card_name, card_uid, media_uuid, media_class, creation_timestamp, revealed=None):
+    def __init__(self, card_name, card_uid, media_uuid, media_class, creation_timestamp, order_index=None, revealed=None):
         self.card_name = card_name
         self.card_uid = card_uid
         self.media_uuid = media_uuid
         self.media_class = media_class
         self.creation_timestamp = creation_timestamp
+        if order_index is not None:
+            self.order_index = order_index
         if revealed is not None:
             self.revealed = revealed
 
@@ -173,7 +175,7 @@ def get_player_cards(player_uid, room_uid):
 def get_room_card(card_uid, room_uid):
     conn = get_conn()
     with conn.cursor() as curs:
-        query = """ select card_name, c.card_uid::varchar, media_uuid::varchar, media_class, creation_timestamp,p.revealed from
+        query = """ select card_name, c.card_uid::varchar, media_uuid::varchar, media_class, creation_timestamp,p.order_index, p.revealed from
                         cards c join cards_in_play p on c.card_uid = p.card_uid and p.room_uid = %s
                         where c.card_uid =%s
                         order by creation_timestamp"""
@@ -268,7 +270,7 @@ def load_cards_in_play(room_uid):
 def get_location_cards(room_uid,game_board_location_x, game_board_location_y):
     conn = get_conn()
     with conn.cursor() as curs:
-        query = """ select card_name, c.card_uid, media_uuid, media_class, creation_timestamp, revealed 
+        query = """ select card_name, c.card_uid, media_uuid, media_class, creation_timestamp, order_index, revealed 
                     from cards_in_play cip join cards c on cip.card_uid = c.card_uid 
                     where room_uid =%s and game_board_location_x =%s and game_board_location_y =%s
         """
@@ -280,8 +282,9 @@ def get_location_cards(room_uid,game_board_location_x, game_board_location_y):
 def draw_game_board_location_top_card(room_uid, game_board_location_x, game_board_location_y):
     conn = get_conn()
     with conn.cursor() as curs:
-        query = """ select card_uid::varchar from cards_in_play where room_uid=%s and game_board_location_x=%s and game_board_location_y=%s"""
-        curs.execute(query, [room_uid, game_board_location_x,game_board_location_y])
+        query = """ select card_uid::varchar from cards_in_play where room_uid=%s and game_board_location_x=%s and game_board_location_y=%s
+                    and order_index = (select max(order_index) from cards_in_play where room_uid=%s and game_board_location_x=%s and game_board_location_y=%s)"""
+        curs.execute(query, [room_uid, game_board_location_x,game_board_location_y, room_uid, game_board_location_x,game_board_location_y])
         return [i[0] for i in curs]
 
 
