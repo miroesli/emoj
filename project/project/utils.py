@@ -67,7 +67,8 @@ def display_options(room_uid, player_uid, selected):
             # only non empty location selected
             elif len(selected.get('players')) == 0:
                 # draw a card(for each revealed) + draw player X hidden cards
-                return [{"option": "draw",  "option_text": "draw a card"}]
+                return [{"option": "draw",  "option_text": "draw a card"},
+                        {"option": "shuffle",  "option_text": "shuffle this pile"}]
             else:
                 return []
     # zero locations
@@ -95,13 +96,12 @@ def display_options(room_uid, player_uid, selected):
 
 # This is the function handler to be called by api.py to pass all the json data from the axios request from the front end.
 # It is to verify that the necessary data is requried before passing it on to the necessary function.
-#todo location stuff
 def function_handler(room_uid, player_uid, option, selected):
 
     posible_options = ["reveal", "pass", "give revealed", "give", "place revealed", "place", "deal", "draw",
-                       "deal location", "deal location revealed"]
+                       "deal location", "deal location revealed", "shuffle"]
     if option not in posible_options:
-        raise LookupError("option not found" + option)
+        raise LookupError("option not found " + option)
     player = db_handler.get_player(player_uid, room_uid)
     if option == "reveal":
         for i in selected.get('cards'):
@@ -175,6 +175,8 @@ def function_handler(room_uid, player_uid, option, selected):
                     db_handler.log_action(room_uid, "a card was dealt")
             else:
                 raise LookupError("option not found")
+    elif option == "shuffle":
+        db_handler.shuffle_location(room_uid, selected.get('locations')[0].get('x'), selected.get('locations')[0].get('y'))
     else:
         raise LookupError("option not found")
 
@@ -195,7 +197,8 @@ def transfer_card(room_uid, card_uid, entity_type, entity_id,revealed=False):
     if entity_type =='player':
         db_handler.update_card_location(room_uid, card_uid, None, None, entity_id,revealed)
     elif entity_type =='location':
-        db_handler.update_card_location(room_uid, card_uid, entity_id.get('x'), entity_id.get('y'), None, revealed)
+        idx = 1 + db_handler.get_position_highest_index()
+        db_handler.update_card_location(room_uid, card_uid, entity_id.get('x'), entity_id.get('y'), None, revealed,idx)
 
 
 # made to refresh page status using API

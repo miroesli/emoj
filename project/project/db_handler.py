@@ -277,13 +277,23 @@ def draw_game_board_location_top_card(room_uid, game_board_location_x, game_boar
         return [i[0] for i in curs]
 
 
-def update_card_location(room_uid, card_uid, game_board_location_x, game_board_location_y, player_uid, revealed=False):
+def update_card_location(room_uid, card_uid, game_board_location_x, game_board_location_y, player_uid, revealed=False,idx =0):
     conn = get_conn()
     with conn.cursor() as curs:
-        query = """update cards_in_play set game_board_location_x=%s,game_board_location_y=%s, player_uid=%s,revealed=%s
+        query = """update cards_in_play set game_board_location_x=%s,game_board_location_y=%s, player_uid=%s,revealed=%s, order_index = %s
                    where room_uid = %s and card_uid = %s 
                 """
-        curs.execute(query, [game_board_location_x,game_board_location_y,player_uid,revealed, room_uid, card_uid])
+        curs.execute(query, [game_board_location_x,game_board_location_y,player_uid,revealed, idx, room_uid, card_uid])
+    conn.commit()
+
+
+def shuffle_location(room_uid, game_board_location_x, game_board_location_y):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """update cards_in_play set order_index=0, revealed=false
+                          where room_uid = %s and game_board_location_x=%s and game_board_location_y=%s
+                       """
+        curs.execute(query, [room_uid, game_board_location_x, game_board_location_y])
     conn.commit()
 
 
