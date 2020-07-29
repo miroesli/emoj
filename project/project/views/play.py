@@ -24,11 +24,5 @@ def render_play(request, room_uid):
         if player_uid is None:
             return redirect('/')
 
-        room_players = db_handler.get_room_players(room_uid)
-        for i in range(5):
-            for p in room_players:
-                utils.deal_card(room_uid, p.player_uid,
-                                db_handler.DBClassPOINT(0, 0))
-
         context = utils.load_play_info(room_uid, player_uid)
         return render(request, 'play.html', context=context)

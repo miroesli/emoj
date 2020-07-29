@@ -157,7 +157,7 @@
         function rerender(new_play_area){
             play_area.players.splice(0,play_area.players.length);
             play_area.players.push(... new_play_area.players);
-            play_area.player.hand.splice(0,play_area.player.hand.length);
+            play_area.player.hand = [];
             play_area.player.hand.push(... new_play_area.player.hand);
             play_area.room_log.splice(0, play_area.room_log.length);
             play_area.room_log.push(... new_play_area.room_log);
@@ -184,7 +184,7 @@
 
         window.onload = function () {
             //uncomment bellow line to get real time sync, it's a pain for debugging so i commented it for now
-            let intervalID = window.setInterval(load_play, 500);
+            //let intervalID = window.setInterval(load_play, 500);
             //vue setup. delimeters set to square brackets because django uses curly
             play_area_vue = new Vue({
                 delimiters: ['[[', ']]'],
@@ -412,7 +412,7 @@
                         </template>
                         </div>
 
-                    <div class="card-body">
+                    <div class="card-body" style="min-height: 155px">
                         <template v-for="card in play_area.player.hand">
                             <div class="card-outline" v-bind:class="{selected: selected.cards.includes(card.card_uid)}" @click="toggle_card_selection(card.card_uid)" >
                                 <div class="card-position" style="border: none; background: none">

@@ -236,8 +236,7 @@ def load_play_info(room_uid, player_uid):
     # removing current players from room_players
     room_players = room_players[1:]
 
-    player.hand = [i.to_dict() for i in db_handler.get_player_cards(
-        player.player_uid, room_uid)]
+    player.hand = [i.to_dict() for i in db_handler.get_player_cards(player.player_uid, room_uid)]
     for p in room_players:
         p.hand = db_handler.get_player_card_revealed(
             p.player_uid, room_uid)
