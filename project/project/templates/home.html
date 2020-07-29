@@ -1,28 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    {% block title %}<title>Local Library</title>{% endblock %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Emoj * Home</title>
+    <link href="../static/css/bootstrap.css" rel="stylesheet">
+    <link href="../static/css/global_css_classes.css" rel="stylesheet">
+
+
     <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
     <!-- axios is a communication platform for vue to communicate to backend-->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <style>
+        .blog-header {
+            line-height: 1;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        .blog-header-logo {
+            font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+            font-size: 2.25rem;
+        }
+
+        .blog-header-logo:hover {
+            text-decoration: none;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+        }
+    </style>
 </head>
 
 <body>
     {% block sidebar %}
     <!-- insert default navigation text for every page -->{% endblock %}
     {% block content %}
-    <h1>home</h1>
-    {% if user.is_authenticated %}
-    Hi {{ user.username }}!
-    <p><a href="/play/36e37bb4-cc52-11ea-b508-784f437b7506">Play</a></p>
-    <p><a href="{% url 'logout' %}">logout</a></p>
-    {% else %}
-    <p>You are not logged in</p>
-    <a href=" {% url 'login' %}">login</a>
-    {% endif %}
-    <p id="please"></p>
+        <div id="" class="container" style="height: calc(100vh - 70px)">
+        <header class="blog-header py-3">
+            <div class="row flex-nowrap justify-content-between align-items-center">
+                <div class="col-4 pt-1">
+{#                    <a class="text-muted" href="#">Home</a>#}
+                </div>
+                <div class="col-4 text-center">
+                    <a class="blog-header-logo text-dark" href="#">Emoj</a>
+                </div>
+                <div class="col-4 d-flex justify-content-end align-items-center"></div>
+            </div>
+        </header>
+
+        <div class="jumbotron p-4 p-md-5 text-white rounded bg-dark" style="display: flex; flex-direction: column; justify-content: space-between">
+            <div class="col-md-6 px-0">
+              <h1 class="display-4 font-italic">Welcome {% if user.is_authenticated %}{{ user.username }}{% endif %}!</h1>
+              </div>
+        <div >
+            {% if user.is_authenticated %}
+                <p class="lead">
+                    <a class="btn btn-info btn-lg" href="/play/36e37bb4-cc52-11ea-b508-784f437b7506" role="button">Play</a>
+                    <a class="btn btn-info btn-lg" href="/design" role="button">Design</a>
+
+                    <a class="btn btn-danger btn-lg" href="{% url 'logout' %}" role="button">Logout</a>
+                </p>
+            {% else %}
+                <p class="lead">
+                    <a class="btn btn-info btn-lg" href="{% url 'login' %}" role="button">Login</a>
+                </p>
+            {% endif %}
+        </div>
+
+
+
+          </div>
+        </div>
     {% endblock %}
+
+
+
     <script>
         var axiosResult = document.getElementById('please');
         axios.get("/api/5").then((response) => {
