@@ -182,6 +182,7 @@ def function_handler(room_uid, player_uid, option, selected):
 
 
 def reset_room(room_uid):
+    db_handler.reset_room_active_player(room_uid)
     db_handler.clear_cards_in_play(room_uid)
     db_handler.clear_log(room_uid)
     db_handler.load_cards_in_play(room_uid)

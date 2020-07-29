@@ -234,6 +234,14 @@ def get_room(room_uid):
             return DBClassRoom(*i)
 
 
+def reset_room_active_player(room_uid):
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """update rooms set active_player_uid =null where room_uid = %s"""
+        curs.execute(query, [room_uid])
+    conn.commit()
+
+
 def clear_cards_in_play(room_uid):
     conn = get_conn()
     with conn.cursor() as curs:
