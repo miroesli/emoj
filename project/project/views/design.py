@@ -8,7 +8,6 @@ def stringy(o):
 
 
 def render_design(request):
-    print('render design')
     cards = db_handler.get_cards()
     templates = db_handler.get_all_templates()
     context = {"cards": [i.to_dict() for i in cards], 'templates': [i.to_dict() for i in templates]}

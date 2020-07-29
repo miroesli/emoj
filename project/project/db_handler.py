@@ -236,6 +236,15 @@ def get_room(room_uid):
             return DBClassRoom(*i)
 
 
+def get_rooms():
+    conn = get_conn()
+    with conn.cursor() as curs:
+        query = """select room_name, room_uid::varchar from rooms """
+        curs.execute(query)
+        return [i for i in curs]
+
+
+
 def reset_room_active_player(room_uid):
     conn = get_conn()
     with conn.cursor() as curs:

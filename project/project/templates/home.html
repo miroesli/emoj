@@ -8,9 +8,13 @@
     <link href="../static/css/global_css_classes.css" rel="stylesheet">
 
 
-    <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+    <!-- development version, includes helpful console warnings -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <!-- axios is a communication platform for vue to communicate to backend-->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- use the latest vue-select release -->
+    <script src="https://unpkg.com/vue-select@latest"></script>
+    <link rel="stylesheet" href="https://unpkg.com/vue-select@latest/dist/vue-select.css">
 
     <style>
         .blog-header {
@@ -33,10 +37,22 @@
 </head>
 
 <body>
-    {% block sidebar %}
-    <!-- insert default navigation text for every page -->{% endblock %}
+   <script>
+       let rooms = {{ rooms | safe }};
+           window.onload = function () {
+            //vue setup. delimeters set to square brackets because django uses curly
+
+            let all_cards_vue = new Vue({
+                delimiters: ['[[', ']]'],
+                el: '#home-page',
+                data: {
+                    rooms
+                },
+                methods: {}})};
+
+   </script>
     {% block content %}
-        <div id="" class="container" style="height: calc(100vh - 70px)">
+        <div id="home-page" class="container" style="height: calc(100vh - 70px)">
         <header class="blog-header py-3">
             <div class="row flex-nowrap justify-content-between align-items-center">
                 <div class="col-4 pt-1">
@@ -56,7 +72,17 @@
         <div >
             {% if user.is_authenticated %}
                 <p class="lead">
-                    <a class="btn btn-info btn-lg" href="/play/36e37bb4-cc52-11ea-b508-784f437b7506" role="button">Play</a>
+                <h3>Join a Game</h3>
+                <div style="display: grid; grid-template-columns: auto auto; width: fit-content; margin: 0 20px 0 0 ">
+
+
+                <template v-for="r in rooms" >
+                    <a class="btn btn-info btn-lg"  :href="'/play/'+r.room_uid" style=" margin: 0 20px 20px 0; align-self: center" role="button">Play</a>
+                    <h5 style="align-self: center">[[r.room_name]]</h5>
+
+                </template>
+                </div>
+                <h3>Or Host your Own</h3>
                     <a class="btn btn-info btn-lg" href="/design" role="button">Design</a>
 
                     <a class="btn btn-danger btn-lg" href="{% url 'logout' %}" role="button">Logout</a>
@@ -74,16 +100,6 @@
         </div>
     {% endblock %}
 
-
-
-    <script>
-        var axiosResult = document.getElementById('please');
-        axios.get("/api/5").then((response) => {
-            this.resp = response.data;
-            axiosResult.innerHTML = this.resp;
-        });
-
-    </script>
 </body>
 
 </html>
