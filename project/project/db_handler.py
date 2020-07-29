@@ -389,10 +389,10 @@ def get_template_decks(template_uid):
 def get_first_deck():
     conn = get_conn()
     with conn.cursor() as curs:
-        query = """ select * from decks limit 1;"""
+        query = """ select deck_uid::varchar from decks limit 1;"""
         curs.execute(query)
         for i in curs:
-            return DBClassDeck(*i)
+            return i[0]
 
 
 #play log functions

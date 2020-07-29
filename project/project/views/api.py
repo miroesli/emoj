@@ -41,7 +41,8 @@ def open_room(request):
             template_uid = uuid.uuid4()
             db_handler.insert_template(template_name, template_uid)
 
-            first_deck_uid = db_handler.get_first_deck().deck_uid
+            first_deck_uid = db_handler.get_first_deck()
+            print(first_deck_uid)
             db_handler.insert_template_deck(template_uid, first_deck_uid, 0, 0)
 
             for p in positions:
