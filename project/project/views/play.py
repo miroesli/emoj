@@ -15,20 +15,14 @@ def render_play(request, room_uid):
     else:
         utils.reset_room(room_uid)
         # replace with get room players when data is ready
-        room_players = db_handler.get_room_players(room_uid)
+        players = db_handler.get_players()
         player_uid = None
-        for player in room_players:
+        for player in players:
             if str(player.username) == str(request.user):
                 player_uid = player.player_uid
                 break
-
         if player_uid is None:
             return redirect('/')
-
-        for i in range(5):
-            for p in room_players:
-                utils.deal_card(room_uid, p.player_uid,
-                                db_handler.DBClassPOINT(0, 0))
 
         context = utils.load_play_info(room_uid, player_uid)
         return render(request, 'play.html', context=context)

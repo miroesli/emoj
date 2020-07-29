@@ -157,7 +157,7 @@
         function rerender(new_play_area){
             play_area.players.splice(0,play_area.players.length);
             play_area.players.push(... new_play_area.players);
-            play_area.player.hand.splice(0,play_area.player.hand.length);
+            play_area.player.hand = [];
             play_area.player.hand.push(... new_play_area.player.hand);
             play_area.room_log.splice(0, play_area.room_log.length);
             play_area.room_log.push(... new_play_area.room_log);
@@ -198,6 +198,9 @@
                   middle_players:function(){
                         if(play_area.players.length>2) {
                             return play_area.players.splice(1, play_area.players.length - 2);
+                        }
+                        else{
+                            return [];
                         }
                   },
                   right_player:function(){
@@ -336,7 +339,7 @@
                 </div>
                 <div id="board-area">
                     <div id="left-bar" class="side-bar">
-                        <div class="player card text-white bg-info"  v-bind:class="{ selected: selected.players.includes(left_player.player_uid) }" @click="toggle_player_selection(left_player.player_uid)">
+                        <div class="player card text-white bg-info" v-if="left_player" v-bind:class="{ selected: selected.players.includes(left_player.player_uid) }" @click="toggle_player_selection(left_player.player_uid)">
                         <small class="card-header" :key="active_player" style="white-space: nowrap">[[left_player.display_name]]
                         <template v-if="left_player.player_uid === active_player">
                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-star-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -376,7 +379,7 @@
                         </div>
                     </div>
                     <div id="right-bar" class="side-bar">
-                        <div class="player card text-white bg-info mb-3"  v-bind:class="{ selected: selected.players.includes(right_player.player_uid) }" @click="toggle_player_selection(right_player.player_uid)" >
+                        <div class="player card text-white bg-info mb-3" v-if="right_player" v-bind:class="{ selected: selected.players.includes(right_player.player_uid) }" @click="toggle_player_selection(right_player.player_uid)" >
                         <small class="card-header" :key="active_player" style="white-space: nowrap">[[right_player.display_name]]
                         <template v-if="right_player.player_uid === active_player">
                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-star-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -409,7 +412,7 @@
                         </template>
                         </div>
 
-                    <div class="card-body">
+                    <div class="card-body" style="min-height: 155px">
                         <template v-for="card in play_area.player.hand">
                             <div class="card-outline" v-bind:class="{selected: selected.cards.includes(card.card_uid)}" @click="toggle_card_selection(card.card_uid)" >
                                 <div class="card-position" style="border: none; background: none">

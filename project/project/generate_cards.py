@@ -10,7 +10,5 @@ for suit in suits:
         db_handler.insert_card(rank + " of " + suit, None, rank + "_" + suit)
 
 cards = db_handler.get_cards()
-decks = db_handler.get_template_decks("36e3531e-cc52-11ea-b508-784f437b7506")
-for deck in decks:
-    for card in cards:
-        db_handler.insert_card_into_deck(deck.deck_uid, card.card_uid)
+for card in cards:
+    db_handler.insert_card_into_deck('36e3a5a8-cc52-11ea-b508-784f437b7506', card.card_uid)
