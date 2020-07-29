@@ -124,7 +124,10 @@ def function_handler(room_uid, player_uid, option, selected):
     elif option == "place revealed" or option == "place":
         for card_uid in selected.get('cards'):
             card = db_handler.get_card(card_uid)
-            transfer_card(room_uid,card.card_uid,"location",selected.get('locations')[0],True)
+            revealed = False
+            if option=="place revealed":
+                revealed=True
+            transfer_card(room_uid,card.card_uid,"location",selected.get('locations')[0],revealed)
             if option == "place revealed":
                 db_handler.log_action(room_uid,player.display_name + " placed " + card.card_name)
         if option == "place":
@@ -198,6 +201,8 @@ def transfer_card(room_uid, card_uid, entity_type, entity_id,revealed=False):
         db_handler.update_card_location(room_uid, card_uid, entity_id.get('x'), entity_id.get('y'), None, revealed)
 
 
+
+
 # made to refresh page status using API
 def load_play_info(room_uid, player_uid):
     room = db_handler.get_room(room_uid)
@@ -208,7 +213,7 @@ def load_play_info(room_uid, player_uid):
         if str(player.player_uid) == player_uid:
             player_index = index
             break
-    if not player_index:
+    if not player_index and player_index !=0:
         db_handler.insert_room_player(room_uid, player_uid)
         room_players = db_handler.get_room_players(room_uid)
     room_players = deque(room_players)
@@ -233,6 +238,23 @@ def load_play_info(room_uid, player_uid):
         for p in positions:
             if p['x'] == i.game_board_location.x and p['y'] == i.game_board_location.y:
                 p.update(i.to_dict())
+                top_cards = db_handler.draw_game_board_location_top_card(room_uid, p['x'], p['y'])
+
+                print(p['x'], p['y'])
+                print(top_cards)
+                if len(top_cards) == 0:
+                    p['top_card'] = ''
+                elif len(top_cards) == 1:
+                    card = db_handler.get_room_card(top_cards[0], room_uid)
+                    print(card.to_dict())
+                    if card.revealed:
+                        p['top_card'] = card.media_class
+                    else:
+                        p['top_card'] = 'facedown'
+                else:
+                    p['top_card'] = 'facedown'
+                print(p['top_card'])
+
 
     room_log = db_handler.get_room_log(room_uid)
 

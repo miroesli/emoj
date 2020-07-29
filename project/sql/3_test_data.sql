@@ -31,3 +31,7 @@ insert into room_players(player_uid, room_uid) values (:'OlegUid', :'RoomUid');
 insert into room_players(player_uid, room_uid) values (:'JuanUid', :'RoomUid');
 
 insert into game_template_decks(game_board_location_x, game_board_location_y, deck_uid, template_uid) values (0,0, :'DeckUid', :'TemplateUid');
+insert into game_template_decks values (3, 2, null, '36e3531e-cc52-11ea-b508-784f437b7506');
+insert into game_template_decks values (0, 3, null, '36e3531e-cc52-11ea-b508-784f437b7506');
+insert into game_template_decks values (3, 3, null, '36e3531e-cc52-11ea-b508-784f437b7506');
+insert into game_template_decks values (3, 4, null, '36e3531e-cc52-11ea-b508-784f437b7506');
