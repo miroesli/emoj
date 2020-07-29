@@ -227,9 +227,13 @@ def load_play_info(room_uid, player_uid):
         if str(player.player_uid) == player_uid:
             player_index = index
             break
-    if not player_index and player_index !=0:
+    if not player_index and player_index != 0:
         db_handler.insert_room_player(room_uid, player_uid)
         room_players = db_handler.get_room_players(room_uid)
+        for index, player in enumerate(room_players):
+            if str(player.player_uid) == player_uid:
+                player_index = index
+                break
     room_players = deque(room_players)
     room_players.rotate(player_index)  # moving list to correct order
     room_players = list(room_players)

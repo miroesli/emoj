@@ -184,7 +184,7 @@
 
         window.onload = function () {
             //uncomment bellow line to get real time sync, it's a pain for debugging so i commented it for now
-            //let intervalID = window.setInterval(load_play, 500);
+            let intervalID = window.setInterval(load_play, 500);
             //vue setup. delimeters set to square brackets because django uses curly
             play_area_vue = new Vue({
                 delimiters: ['[[', ']]'],
