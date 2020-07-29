@@ -184,7 +184,7 @@
 
         window.onload = function () {
             //uncomment bellow line to get real time sync, it's a pain for debugging so i commented it for now
-            //let intervalID = window.setInterval(load_play, 500);
+            let intervalID = window.setInterval(load_play, 500);
             //vue setup. delimeters set to square brackets because django uses curly
             play_area_vue = new Vue({
                 delimiters: ['[[', ']]'],
@@ -198,6 +198,9 @@
                   middle_players:function(){
                         if(play_area.players.length>2) {
                             return play_area.players.splice(1, play_area.players.length - 2);
+                        }
+                        else{
+                            return [];
                         }
                   },
                   right_player:function(){
@@ -336,7 +339,7 @@
                 </div>
                 <div id="board-area">
                     <div id="left-bar" class="side-bar">
-                        <div class="player card text-white bg-info"  v-bind:class="{ selected: selected.players.includes(left_player.player_uid) }" @click="toggle_player_selection(left_player.player_uid)">
+                        <div class="player card text-white bg-info" v-if="left_player" v-bind:class="{ selected: selected.players.includes(left_player.player_uid) }" @click="toggle_player_selection(left_player.player_uid)">
                         <small class="card-header" :key="active_player" style="white-space: nowrap">[[left_player.display_name]]
                         <template v-if="left_player.player_uid === active_player">
                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-star-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -376,7 +379,7 @@
                         </div>
                     </div>
                     <div id="right-bar" class="side-bar">
-                        <div class="player card text-white bg-info mb-3"  v-bind:class="{ selected: selected.players.includes(right_player.player_uid) }" @click="toggle_player_selection(right_player.player_uid)" >
+                        <div class="player card text-white bg-info mb-3" v-if="right_player" v-bind:class="{ selected: selected.players.includes(right_player.player_uid) }" @click="toggle_player_selection(right_player.player_uid)" >
                         <small class="card-header" :key="active_player" style="white-space: nowrap">[[right_player.display_name]]
                         <template v-if="right_player.player_uid === active_player">
                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-star-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
