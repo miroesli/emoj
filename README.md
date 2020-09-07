@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/miroesli/emoj.svg?style=shield)](https://circleci.com/gh/miroesli/emoj)
 
-Seng 499 project by Emily, Misha, Oleg, and Juan.
+A virtual board game engine for the Seng 499 design project course by **E**mily, **M**isha, **O**leg, and **J**uan.
 
 ## Requirements
 
