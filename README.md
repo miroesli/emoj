@@ -11,6 +11,12 @@ A virtual board game engine for the Seng 499 design project course by **E**mily,
 - [psycopg](https://www.psycopg.org/docs/install.html)
 - [Virtualenv (optional)](https://virtualenv.pypa.io/en/stable/installation.html)
 
+## Presentation
+
+Project #37 in the [Virtual Open House of UVic 499 Course Projects](https://www.ece.uvic.ca/~fayez/courses/499/index.html)
+- [Poster Link](https://www.ece.uvic.ca/~fayez/courses/499/posters/37.pdf)
+- [Video Link](https://admin.video.ubc.ca/html5/html5lib/v2.82.2/mwEmbedFrame.php/p/180/uiconf_id/23451293/entry_id/0_9haqlmuh?wid=_180&iframeembed=true&playerId=kaltura_player&entry_id=0_9haqlmuh&flashvars[streamerType]=auto&flashvars[localizationCode]=en&flashvars[leadWithHTML5]=true&flashvars[sideBarContainer.plugin]=true&flashvars[sideBarContainer.position]=left&flashvars[sideBarContainer.clickToClose]=true&flashvars[chapters.plugin]=true&flashvars[chapters.layout]=vertical&flashvars[chapters.thumbnailRotator]=false&flashvars[streamSelector.plugin]=true&flashvars[EmbedPlayer.SpinnerTarget]=videoHolder&flashvars[dualScreen.plugin]=true&flashvars[hotspots.plugin]=1&flashvars[Kaltura.addCrossoriginToIframe]=true&&wid=0_0xk6xbpz)
+
 ## Running locally
 
 ### Step 1: Clone or fork the repository and change current directory
@@ -157,3 +163,8 @@ python manage.py test --pattern="tests_*.py"
 ### Circleci
 
 To test circleci script see the circleci local [installation docs](https://circleci.com/docs/2.0/local-cli/#installation)
+
+## :heart: Credits & Thanks
+
+- Dr Miguel Nacenta for guiding us in our design decisions.
+
